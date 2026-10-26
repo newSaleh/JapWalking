@@ -311,11 +311,13 @@
   .s-head {
     position: relative;
     display: flex; justify-content: space-between; align-items: center;
-    padding: 18px 22px 0;
-    font-size: 18px; font-weight: 700;
-    opacity: .55;
+    padding: max(7vh, 44px) 26px 0;
+    font-size: 24px; font-weight: 700;
+    opacity: .85;
   }
   .s-phase { color: var(--phase); }
+  /* keep the areas behind the status bar and home indicator black too */
+  html.in-session, html.in-session body { background: #000; }
   .s-round { color: #a39d93; font-weight: 500; }
   .s-time {
     position: relative;
@@ -326,6 +328,7 @@
     line-height: .9;
     letter-spacing: -.03em;
     font-size: min(30vw, 46vh);
+    padding-bottom: 14vh; /* sit a little above the middle */
   }
   .s-time.short { font-size: min(39vw, 52vh); }
   .s-pbar { position: relative; height: 6px; margin: 0 22px 26px; background: #161616; border-radius: 3px; overflow: hidden; opacity: .6; }
@@ -975,6 +978,7 @@
     $('record').hidden = id !== 'record';
     $('session').hidden = id !== 'session';
     themeMetas.forEach((m, i) => { m.content = id === 'session' ? '#000000' : themeOrig[i]; });
+    document.documentElement.classList.toggle('in-session', id === 'session');
     window.scrollTo(0, 0);
     if (id === 'setup') applyUpdate();
   }
