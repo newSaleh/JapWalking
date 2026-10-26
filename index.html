@@ -1,0 +1,742 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>المشي الياباني</title>
+<meta name="description" content="مؤقّت بسيط للمشي الياباني المتقطّع (Interval Walking Training): مشي سريع ثم هادئ بالتناوب.">
+<meta name="theme-color" content="#f6f3ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141312" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="المشي الياباني">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23c8553d'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='sans-serif'%3E%E6%AD%A9%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f3ee;
+    --surface: #fffdf9;
+    --surface-2: #f1ece4;
+    --text: #1f1d1a;
+    --muted: #6f6a62;
+    --line: #e7e1d7;
+    --accent: #c8553d;
+    --accent-ink: #ffffff;
+    --fast: #d9583b;
+    --slow: #2f8f83;
+    --warm: #d4952a;
+    --cool: #4a78b5;
+    --shadow: 0 1px 2px rgba(40, 30, 20, .05), 0 8px 24px rgba(40, 30, 20, .06);
+    --radius: 20px;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141312;
+      --surface: #1d1b19;
+      --surface-2: #26231f;
+      --text: #f2eee8;
+      --muted: #a39d93;
+      --line: #2f2c28;
+      --accent: #e0684d;
+      --fast: #ef7556;
+      --slow: #4fb3a5;
+      --warm: #e8b04a;
+      --cool: #6f9bd6;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141312;
+    --surface: #1d1b19;
+    --surface-2: #26231f;
+    --text: #f2eee8;
+    --muted: #a39d93;
+    --line: #2f2c28;
+    --accent: #e0684d;
+    --fast: #ef7556;
+    --slow: #4fb3a5;
+    --warm: #e8b04a;
+    --cool: #6f9bd6;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  [hidden] { display: none !important; }
+  .num { font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
+
+  .app {
+    max-width: 460px;
+    margin: 0 auto;
+    padding: max(16px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+  }
+
+  /* Header */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 4px 0 20px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .mark {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--accent-ink);
+    display: grid; place-items: center;
+    font-size: 22px;
+    font-family: "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif;
+    flex: none;
+  }
+  h1 { font-size: 20px; margin: 0; line-height: 1.2; font-weight: 700; }
+  .brand p { margin: 0; font-size: 13px; color: var(--muted); }
+  .icon-btn {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    display: grid; place-items: center;
+    flex: none;
+  }
+  .icon-btn svg { width: 20px; height: 20px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  /* Settings */
+  .settings { padding: 6px 18px; }
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .row:last-child { border-bottom: 0; }
+  .row.stack { flex-direction: column; align-items: stretch; gap: 10px; }
+  .label { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+  .label small { display: block; color: var(--muted); font-weight: 400; font-size: 12.5px; line-height: 1.3; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+
+  .stepper { display: flex; align-items: center; gap: 4px; }
+  .stepper button {
+    width: 38px; height: 38px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    font-size: 20px;
+    line-height: 1;
+    display: grid; place-items: center;
+    transition: transform .1s;
+  }
+  .stepper button:active { transform: scale(.92); }
+  .stepper button:disabled { opacity: .35; cursor: default; }
+  .stepper output { min-width: 48px; text-align: center; font-size: 20px; font-weight: 700; }
+  .stepper output span { font-size: 12px; font-weight: 400; color: var(--muted); margin-inline-start: 2px; }
+
+  .chips { display: flex; gap: 6px; }
+  .chips button {
+    flex: 1;
+    height: 38px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    font-size: 14px;
+    font-weight: 500;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .chips button[aria-pressed="true"] {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
+
+  /* Summary + timeline */
+  .summary { margin: 18px 4px 14px; }
+  .summary-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .summary-top b { font-size: 26px; }
+  .summary-top span { color: var(--muted); font-size: 14px; }
+  .timeline {
+    position: relative;
+    display: flex;
+    gap: 3px;
+    height: 12px;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .timeline i { display: block; height: 100%; border-radius: 3px; opacity: .9; }
+  .timeline.live { height: 10px; }
+  .timeline.live i { opacity: .28; transition: opacity .3s; }
+  .timeline.live i.past { opacity: .9; }
+  .timeline.live i.now { opacity: 1; }
+  .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px; font-size: 12.5px; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+  .primary {
+    width: 100%;
+    height: 60px;
+    border: 0;
+    border-radius: 18px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-size: 19px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: 0 8px 20px color-mix(in srgb, var(--accent) 30%, transparent);
+    transition: transform .1s;
+  }
+  .primary:active { transform: scale(.98); }
+  .primary svg { width: 22px; height: 22px; }
+
+  /* Week streak */
+  .week { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 14px 4px 0; font-size: 13.5px; color: var(--muted); }
+  .week-dots { display: flex; gap: 6px; }
+  .week-dots i { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--line); background: transparent; }
+  .week-dots i.on { background: var(--slow); border-color: var(--slow); }
+
+  /* Principles */
+  .principles { margin-top: 26px; padding: 20px 18px 8px; }
+  .principles h2 { font-size: 17px; margin: 0 0 4px; }
+  .principles > p { margin: 0 0 12px; color: var(--muted); font-size: 14px; }
+  .principles ol { list-style: none; margin: 0; padding: 0; counter-reset: p; }
+  .principles li {
+    counter-increment: p;
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 10px;
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+    font-size: 14.5px;
+  }
+  .principles li::before {
+    content: counter(p);
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--surface-2);
+    display: grid; place-items: center;
+    font-size: 13px; font-weight: 700;
+    margin-top: 1px;
+  }
+  .principles li b { display: block; margin-bottom: 2px; }
+  .principles li span { color: var(--muted); }
+  .note { font-size: 12.5px; color: var(--muted); margin: 14px 4px 0; text-align: center; }
+
+  /* Session */
+  #session { text-align: center; }
+  .phase-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 18px;
+    color: #fff;
+    background: var(--phase);
+    transition: background .4s;
+  }
+  .round { margin-top: 10px; color: var(--muted); font-size: 14px; }
+  .ring-wrap { position: relative; width: min(78vw, 300px); aspect-ratio: 1; margin: 18px auto 10px; }
+  .ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring-bg { stroke: var(--surface-2); }
+  .ring-fg { stroke: var(--phase); transition: stroke .4s; stroke-linecap: round; }
+  .ring-center { position: absolute; inset: 0; display: grid; place-content: center; gap: 2px; }
+  .time { font-size: clamp(56px, 18vw, 76px); font-weight: 700; line-height: 1; letter-spacing: -1px; }
+  .hint { color: var(--muted); font-size: 14px; max-width: 70%; margin: 6px auto 0; line-height: 1.5; }
+  .next { margin: 6px 0 18px; font-size: 15px; }
+  .next b { color: var(--next, var(--text)); }
+  .totals { display: flex; justify-content: space-between; margin-top: 8px; font-size: 13px; color: var(--muted); }
+
+  .controls { display: grid; grid-template-columns: 1fr 1.6fr 1fr; gap: 10px; margin-top: 22px; align-items: center; }
+  .ctrl {
+    height: 56px;
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-size: 14px; font-weight: 500;
+  }
+  .ctrl svg { width: 20px; height: 20px; }
+  .ctrl.main { height: 64px; background: var(--text); color: var(--bg); border-color: var(--text); font-size: 17px; font-weight: 700; }
+  .ctrl.main svg { width: 24px; height: 24px; }
+  .paused .time { opacity: .45; }
+
+  /* Done */
+  #done { text-align: center; padding-top: 30px; }
+  .done-mark {
+    width: 96px; height: 96px; border-radius: 50%;
+    margin: 0 auto 18px;
+    background: color-mix(in srgb, var(--slow) 16%, transparent);
+    color: var(--slow);
+    display: grid; place-items: center;
+  }
+  .done-mark svg { width: 48px; height: 48px; }
+  #done h2 { margin: 0 0 6px; font-size: 24px; }
+  #done p { margin: 0 0 24px; color: var(--muted); }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+  .stats div { padding: 14px 6px; }
+  .stats b { display: block; font-size: 24px; line-height: 1.2; }
+  .stats span { font-size: 12.5px; color: var(--muted); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<main class="app">
+  <header>
+    <div class="brand">
+      <div class="mark" aria-hidden="true">歩</div>
+      <div>
+        <h1>المشي الياباني</h1>
+        <p>Interval Walking Training</p>
+      </div>
+    </div>
+    <button class="icon-btn" id="soundBtn" aria-label="الصوت"></button>
+  </header>
+
+  <!-- Setup -->
+  <section id="setup">
+    <div class="card settings">
+      <div class="row">
+        <div class="label"><i class="dot" style="background:var(--fast)"></i><div>مشي سريع<small>مدة كل فترة</small></div></div>
+        <div class="stepper" data-key="fast" data-min="1" data-max="10">
+          <button type="button" data-d="1" aria-label="زيادة">+</button>
+          <output class="num"></output>
+          <button type="button" data-d="-1" aria-label="إنقاص">−</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="label"><i class="dot" style="background:var(--slow)"></i><div>مشي هادئ<small>مدة كل فترة</small></div></div>
+        <div class="stepper" data-key="slow" data-min="1" data-max="10">
+          <button type="button" data-d="1" aria-label="زيادة">+</button>
+          <output class="num"></output>
+          <button type="button" data-d="-1" aria-label="إنقاص">−</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="label"><div>عدد الجولات<small>الجولة = سريع + هادئ</small></div></div>
+        <div class="stepper" data-key="rounds" data-min="1" data-max="12">
+          <button type="button" data-d="1" aria-label="زيادة">+</button>
+          <output class="num"></output>
+          <button type="button" data-d="-1" aria-label="إنقاص">−</button>
+        </div>
+      </div>
+      <div class="row stack">
+        <div class="label"><i class="dot" style="background:var(--warm)"></i><div>تسخين في البداية</div></div>
+        <div class="chips" data-key="warm">
+          <button type="button" data-v="0">بدون</button>
+          <button type="button" data-v="2">2 د</button>
+          <button type="button" data-v="3">3 د</button>
+          <button type="button" data-v="5">5 د</button>
+          <button type="button" data-v="10">10 د</button>
+        </div>
+      </div>
+      <div class="row stack">
+        <div class="label"><i class="dot" style="background:var(--cool)"></i><div>تهدئة في النهاية</div></div>
+        <div class="chips" data-key="cool">
+          <button type="button" data-v="0">بدون</button>
+          <button type="button" data-v="2">2 د</button>
+          <button type="button" data-v="3">3 د</button>
+          <button type="button" data-v="5">5 د</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary">
+      <div class="summary-top"><b><span class="num" id="totalMin" style="font-size:inherit;color:inherit"></span> دقيقة</b><span id="summaryText"></span></div>
+      <div class="timeline" id="previewBar"></div>
+      <div class="legend" id="legend"></div>
+    </div>
+
+    <button class="primary" id="startBtn">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 6.5v11a1 1 0 0 0 1.5.86l9.5-5.5a1 1 0 0 0 0-1.72l-9.5-5.5A1 1 0 0 0 7 6.5z"/></svg>
+      ابدأ المشي
+    </button>
+
+    <div class="week">
+      <span>آخر ٧ أيام · الهدف ٤ أيام</span>
+      <div class="week-dots" id="weekDots"></div>
+    </div>
+
+    <article class="card principles">
+      <h2>مبادئ المشي الياباني</h2>
+      <p>طريقة طوّرها باحثون في جامعة شينشو اليابانية: بدل المشي بسرعة ثابتة، تتناوب بين فترات سريعة وهادئة.</p>
+      <ol>
+        <li><div><b>3 دقائق سريع، 3 دقائق هادئ</b><span>هذا هو الأساس. كرّرها 5 مرات فتصير 30 دقيقة.</span></div></li>
+        <li><div><b>السريع ≈ 70% من جهدك</b><span>تتنفّس بقوة وتستطيع الكلام بجمل قصيرة فقط. «متعب قليلًا» لا «منهك».</span></div></li>
+        <li><div><b>الهادئ ≈ 40% من جهدك</b><span>مشي مريح تستعيد فيه أنفاسك، لا تتوقّف.</span></div></li>
+        <li><div><b>4 أيام في الأسبوع على الأقل</b><span>الاستمرار أهم من الشدّة. الهدف ~60 دقيقة سريعة أسبوعيًا.</span></div></li>
+        <li><div><b>الوضعية</b><span>ظهر مستقيم ونظر للأمام، خطوة أوسع من المعتاد، الهبوط على الكعب، والذراعان مثنيّتان بزاوية 90° تتأرجحان.</span></div></li>
+        <li><div><b>تدرّج</b><span>إن كنت مبتدئًا ابدأ بجولتين أو ثلاث وزد جولة كل أسبوع.</span></div></li>
+      </ol>
+    </article>
+
+    <p class="note">توقّف فورًا عند ألم في الصدر أو دوخة، واستشر طبيبك إن كانت لديك حالة صحية.</p>
+  </section>
+
+  <!-- Session -->
+  <section id="session" hidden>
+    <div class="phase-pill" id="phaseName"></div>
+    <div class="round" id="roundText"></div>
+
+    <div class="ring-wrap">
+      <svg viewBox="0 0 240 240" aria-hidden="true">
+        <circle class="ring-bg" cx="120" cy="120" r="108" fill="none" stroke-width="14"/>
+        <circle class="ring-fg" id="ring" cx="120" cy="120" r="108" fill="none" stroke-width="14"/>
+      </svg>
+      <div class="ring-center">
+        <div class="time num" id="timeText">0:00</div>
+        <div class="hint" id="hintText"></div>
+      </div>
+    </div>
+
+    <div class="next" id="nextText"></div>
+
+    <div class="timeline live" id="liveBar"></div>
+    <div class="totals">
+      <span>مضى <b class="num" id="elapsedText">0:00</b></span>
+      <span>متبقٍّ <b class="num" id="remainText">0:00</b></span>
+    </div>
+
+    <div class="controls">
+      <button class="ctrl" id="stopBtn" aria-label="إنهاء">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+        إنهاء
+      </button>
+      <button class="ctrl main" id="pauseBtn"></button>
+      <button class="ctrl" id="skipBtn" aria-label="التالي">
+        التالي
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 6.5v11l8.5-5.5L6 6.5z"/><rect x="17" y="6" width="2" height="12" rx="1"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- Done -->
+  <section id="done" hidden>
+    <div class="done-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+    </div>
+    <h2>أحسنت!</h2>
+    <p id="doneText"></p>
+    <div class="stats">
+      <div class="card"><b class="num" id="statTotal"></b><span>دقيقة إجمالًا</span></div>
+      <div class="card"><b class="num" id="statFast"></b><span>دقيقة سريعة</span></div>
+      <div class="card"><b class="num" id="statWeek"></b><span>أيام هذا الأسبوع</span></div>
+    </div>
+    <button class="primary" id="againBtn">رجوع</button>
+  </section>
+</main>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+
+  const PHASES = {
+    warm: { name: 'تسخين', hint: 'مشي خفيف، حرّك كتفيك وكاحليك', color: '--warm' },
+    fast: { name: 'مشي سريع', hint: 'خطوة واسعة وذراعان نشيطتان. تتكلم بجمل قصيرة', color: '--fast' },
+    slow: { name: 'مشي هادئ', hint: 'استرجع أنفاسك، لا تتوقف', color: '--slow' },
+    cool: { name: 'تهدئة', hint: 'أبطئ تدريجيًا وتنفّس بعمق', color: '--cool' },
+  };
+  const ORDER = ['warm', 'fast', 'slow', 'cool'];
+
+  // ---------- storage (best effort) ----------
+  const store = {
+    get(k, fallback) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : fallback; } catch { return fallback; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+  };
+
+  const DEFAULTS = { fast: 3, slow: 3, rounds: 5, warm: 3, cool: 0 };
+  const settings = Object.assign({}, DEFAULTS, store.get('jw-settings', {}));
+  let muted = store.get('jw-muted', false);
+
+  // ---------- plan ----------
+  function buildPlan() {
+    const plan = [];
+    if (settings.warm) plan.push({ type: 'warm', dur: settings.warm * 60 });
+    for (let r = 1; r <= settings.rounds; r++) {
+      plan.push({ type: 'fast', dur: settings.fast * 60, round: r });
+      plan.push({ type: 'slow', dur: settings.slow * 60, round: r });
+    }
+    if (settings.cool) plan.push({ type: 'cool', dur: settings.cool * 60 });
+    let t = 0;
+    for (const p of plan) { p.start = t; t += p.dur; }
+    return { plan, total: t };
+  }
+
+  function renderBar(el, plan) {
+    el.innerHTML = '';
+    for (const p of plan) {
+      const i = document.createElement('i');
+      i.style.flex = p.dur + ' 1 0';
+      i.style.background = `var(${PHASES[p.type].color})`;
+      el.appendChild(i);
+    }
+  }
+
+  const fmt = (s) => {
+    s = Math.max(0, Math.round(s));
+    const m = Math.floor(s / 60);
+    return m + ':' + String(s % 60).padStart(2, '0');
+  };
+
+  // ---------- setup UI ----------
+  function renderSetup() {
+    document.querySelectorAll('.stepper').forEach((st) => {
+      const k = st.dataset.key, v = settings[k];
+      st.querySelector('output').innerHTML = v + (k === 'rounds' ? '' : '<span>د</span>');
+      st.querySelector('[data-d="-1"]').disabled = v <= +st.dataset.min;
+      st.querySelector('[data-d="1"]').disabled = v >= +st.dataset.max;
+    });
+    document.querySelectorAll('.chips').forEach((ch) => {
+      ch.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.v === settings[ch.dataset.key])));
+    });
+    const { plan, total } = buildPlan();
+    $('totalMin').textContent = Math.round(total / 60);
+    $('summaryText').textContent = `${settings.rounds} × (${settings.fast} سريع + ${settings.slow} هادئ)`;
+    renderBar($('previewBar'), plan);
+    $('legend').innerHTML = ORDER
+      .filter((t) => plan.some((p) => p.type === t))
+      .map((t) => `<span><i class="dot" style="background:var(${PHASES[t].color})"></i>${PHASES[t].name}</span>`)
+      .join('');
+    renderWeek();
+    store.set('jw-settings', settings);
+  }
+
+  document.querySelectorAll('.stepper').forEach((st) => {
+    st.addEventListener('click', (e) => {
+      const b = e.target.closest('button'); if (!b) return;
+      const k = st.dataset.key;
+      settings[k] = Math.min(+st.dataset.max, Math.max(+st.dataset.min, settings[k] + +b.dataset.d));
+      renderSetup();
+    });
+  });
+  document.querySelectorAll('.chips').forEach((ch) => {
+    ch.addEventListener('click', (e) => {
+      const b = e.target.closest('button'); if (!b) return;
+      settings[ch.dataset.key] = +b.dataset.v;
+      renderSetup();
+    });
+  });
+
+  // ---------- week history ----------
+  const dayKey = (d) => d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+  function lastWeek() {
+    const days = new Set(store.get('jw-days', []));
+    const out = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      out.push(days.has(dayKey(d)));
+    }
+    return out;
+  }
+  function renderWeek() {
+    // index 0 = 6 days ago; in RTL the first dot sits on the right, so today ends on the left
+    $('weekDots').innerHTML = lastWeek().map((on) => `<i class="${on ? 'on' : ''}"></i>`).join('');
+  }
+  function markToday() {
+    const days = store.get('jw-days', []);
+    const k = dayKey(new Date());
+    if (!days.includes(k)) days.push(k);
+    store.set('jw-days', days.slice(-60));
+  }
+
+  // ---------- sound & haptics ----------
+  let ac = null;
+  function initAudio() {
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      if (ac.state === 'suspended') ac.resume();
+    } catch { ac = null; }
+  }
+  function tone(freq, dur, when = 0, vol = 0.3) {
+    if (muted || !ac) return;
+    const t = ac.currentTime + when;
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = 'sine';
+    o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(ac.destination);
+    o.start(t);
+    o.stop(t + dur + 0.05);
+  }
+  const vibrate = (p) => { if (!muted && navigator.vibrate) try { navigator.vibrate(p); } catch {} };
+  function cue(type) {
+    if (type === 'fast') { tone(660, .18); tone(880, .35, .2); vibrate([200, 80, 200]); }
+    else if (type === 'slow') { tone(660, .18); tone(440, .4, .2); vibrate([400]); }
+    else if (type === 'done') { [523, 659, 784, 1047].forEach((f, i) => tone(f, .3, i * .15)); vibrate([150, 60, 150, 60, 300]); }
+    else { tone(587, .35); vibrate([250]); }
+  }
+  const countTick = () => { tone(440, .08, 0, .2); vibrate(40); };
+
+  const ICON_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+  const ICON_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M22 9l-6 6M16 9l6 6"/></svg>';
+  function renderSound() {
+    $('soundBtn').innerHTML = muted ? ICON_OFF : ICON_ON;
+    $('soundBtn').setAttribute('aria-label', muted ? 'تشغيل الصوت' : 'كتم الصوت');
+  }
+  $('soundBtn').addEventListener('click', () => {
+    muted = !muted; store.set('jw-muted', muted); renderSound();
+    if (!muted) { initAudio(); tone(660, .12); }
+  });
+
+  // ---------- wake lock ----------
+  let wakeLock = null;
+  async function lockScreen() {
+    try { if ('wakeLock' in navigator && !wakeLock) { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); } } catch {}
+  }
+  function unlockScreen() { try { wakeLock && wakeLock.release(); } catch {} wakeLock = null; }
+
+  // ---------- session engine ----------
+  const R = 108, C = 2 * Math.PI * R;
+  $('ring').style.strokeDasharray = C;
+
+  let S = null; // { plan, total, running, startAt, before, idx, lastSec, timer }
+
+  const elapsed = () => S.before + (S.running ? (Date.now() - S.startAt) / 1000 : 0);
+
+  function show(id) {
+    ['setup', 'session', 'done'].forEach((s) => { $(s).hidden = s !== id; });
+    window.scrollTo(0, 0);
+  }
+
+  function start() {
+    initAudio();
+    const { plan, total } = buildPlan();
+    S = { plan, total, running: true, startAt: Date.now(), before: 0, idx: -1, lastSec: null, timer: null };
+    renderBar($('liveBar'), plan);
+    show('session');
+    lockScreen();
+    S.timer = setInterval(tick, 200);
+    tick();
+  }
+
+  function setPhaseUI(i) {
+    const p = S.plan[i], meta = PHASES[p.type];
+    document.documentElement.style.setProperty('--phase', `var(${meta.color})`);
+    $('phaseName').textContent = meta.name;
+    $('hintText').textContent = meta.hint;
+    const rounds = settings.rounds;
+    $('roundText').textContent = p.round ? `الجولة ${p.round} من ${rounds}` : (p.type === 'warm' ? 'قبل الجولات' : 'بعد الجولات');
+    const n = S.plan[i + 1];
+    if (n) {
+      $('nextText').innerHTML = `التالي: <b style="color:var(${PHASES[n.type].color})">${PHASES[n.type].name}</b> · ${n.dur / 60} د`;
+    } else {
+      $('nextText').textContent = 'المرحلة الأخيرة 💪';
+    }
+    [...$('liveBar').children].forEach((el, k) => {
+      el.className = k < i ? 'past' : k === i ? 'now' : '';
+    });
+  }
+
+  function tick() {
+    if (!S) return;
+    const e = elapsed();
+    if (e >= S.total) return finish(true);
+    let i = S.plan.findIndex((p) => e >= p.start && e < p.start + p.dur);
+    if (i < 0) i = S.plan.length - 1;
+    if (i !== S.idx) {
+      S.idx = i;
+      S.lastSec = null;
+      setPhaseUI(i);
+      if (S.running) cue(S.plan[i].type);
+    }
+    const p = S.plan[i];
+    const left = p.start + p.dur - e;
+    const sec = Math.ceil(left);
+    if (S.running && sec !== S.lastSec && sec >= 1 && sec <= 3 && S.lastSec !== null) countTick();
+    S.lastSec = sec;
+    $('timeText').textContent = fmt(sec);
+    $('ring').style.strokeDashoffset = C * (1 - (e - p.start) / p.dur);
+    $('elapsedText').textContent = fmt(e);
+    $('remainText').textContent = fmt(S.total - e);
+  }
+
+  function renderPause() {
+    const btn = $('pauseBtn');
+    btn.innerHTML = S.running
+      ? '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.5"/><rect x="14" y="5" width="4" height="14" rx="1.5"/></svg>إيقاف مؤقت'
+      : '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 6.5v11a1 1 0 0 0 1.5.86l9.5-5.5a1 1 0 0 0 0-1.72l-9.5-5.5A1 1 0 0 0 7 6.5z"/></svg>استئناف';
+    $('session').classList.toggle('paused', !S.running);
+  }
+
+  $('pauseBtn').addEventListener('click', () => {
+    if (!S) return;
+    if (S.running) { S.before = elapsed(); S.running = false; unlockScreen(); }
+    else { initAudio(); S.startAt = Date.now(); S.running = true; lockScreen(); }
+    renderPause();
+    tick();
+  });
+
+  $('skipBtn').addEventListener('click', () => {
+    if (!S) return;
+    const n = S.plan[S.idx + 1];
+    if (!n) return finish(true);
+    S.before = n.start;
+    S.startAt = Date.now();
+    tick();
+  });
+
+  $('stopBtn').addEventListener('click', () => {
+    if (!S) return;
+    if (confirm('إنهاء الجلسة الآن؟')) finish(false);
+  });
+
+  function finish(completed) {
+    const e = Math.min(elapsed(), S.total);
+    clearInterval(S.timer);
+    unlockScreen();
+    // fast minutes actually walked
+    let fast = 0;
+    for (const p of S.plan) if (p.type === 'fast') fast += Math.max(0, Math.min(p.dur, e - p.start));
+    const counts = completed || e >= S.total * 0.6;
+    if (counts) markToday();
+    if (completed) cue('done');
+    $('doneText').textContent = completed
+      ? 'أنهيت الجلسة كاملة. استمر على ٤ أيام في الأسبوع.'
+      : (counts ? 'جلسة جيدة، احتُسبت لليوم.' : 'كل خطوة تُحسب. حاول إكمال الجلسة في المرة القادمة.');
+    $('statTotal').textContent = Math.round(e / 60);
+    $('statFast').textContent = Math.round(fast / 60);
+    $('statWeek').textContent = lastWeek().filter(Boolean).length;
+    S = null;
+    show('done');
+  }
+
+  $('againBtn').addEventListener('click', () => { renderSetup(); show('setup'); });
+  $('startBtn').addEventListener('click', () => { start(); renderPause(); });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && S) {
+      if (S.running) lockScreen();
+      tick();
+    }
+  });
+
+  renderSound();
+  renderSetup();
+})();
+</script>
+</body>
+</html>
