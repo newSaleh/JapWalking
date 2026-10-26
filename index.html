@@ -381,7 +381,9 @@
   .done-mark svg { width: 42px; height: 42px; }
   .rec-top h2 { margin: 0 0 2px; font-size: 24px; }
   .rec-top p { margin: 0; color: var(--muted); font-size: 14px; }
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+  .stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 14px; }
+  .stats .card { grid-column: span 2; }
+  .stats .card.w { grid-column: span 3; }
   .stats div { padding: 12px 6px; text-align: center; }
   .stats b { display: block; font-size: 24px; line-height: 1.2; }
   .stats span { font-size: 12.5px; color: var(--muted); }
@@ -555,6 +557,8 @@
       <div class="card"><b class="num" id="statTotal"></b><span>دقيقة إجمالًا</span></div>
       <div class="card"><b class="num" id="statFast"></b><span>دقيقة سريعة</span></div>
       <div class="card"><b class="num" id="statRounds"></b><span>جولات</span></div>
+      <div class="card w"><b class="num" id="statSteps"></b><span id="statStepsLbl">خطوة</span></div>
+      <div class="card w"><b class="num" id="statDist"></b><span id="statDistLbl">كم</span></div>
     </div>
 
     <button class="primary continue" id="continueBtn"></button>
@@ -878,7 +882,7 @@
     const list = historyAll ? sessions : sessions.slice(0, 6);
     let html = list.map((s) => `
       <button class="h-row" data-id="${s.id}">
-        <div><b>${esc(DF.format(s.date))}</b><small>${esc(TF.format(s.date))}${s.effort ? ` · جهد ${s.effort}/10` : ''}${s.distance ? ` · ${s.distance} كم` : ''}</small></div>
+        <div><b>${esc(DF.format(s.date))}</b><small>${esc(TF.format(s.date))}${s.effort ? ` · جهد ${s.effort}/10` : ''}${(() => { const m = movement(s); return m.km ? ` · ${m.kmEst ? '≈ ' : ''}${m.km} كم` : ''; })()}</small></div>
         <div class="h-num"><b><span class="num">${Math.round(recTotal(s))}</span> د</b><small>سريع ${r1(s.fast || 0)}</small></div>
       </button>`).join('');
     if (!sessions.length) html = '<p class="empty">لا توجد جلسات بعد. ستظهر هنا بعد أول مشي.</p>';
@@ -1190,10 +1194,28 @@
     show('record');
   }
 
+  // Steps / distance: the page cannot read the phone's step counter, so estimate from time spent in each phase
+  // (typical cadence per phase, steps per minute) and step length; typed-in real values always win.
+  const CADENCE = { warm: 110, fast: 130, slow: 115, cool: 100 };
+  const STEP_M = 0.72;
+  function movement(r) {
+    const est = Math.round((r.warm || 0) * CADENCE.warm + (r.fast || 0) * CADENCE.fast + (r.slow || 0) * CADENCE.slow + (r.cool || 0) * CADENCE.cool);
+    const realSteps = +r.steps > 0 ? Math.round(+r.steps) : 0;
+    const realKm = +r.distance > 0 ? +r.distance : 0;
+    const steps = realSteps || est;
+    const km = realKm || (steps ? Math.round(steps * STEP_M / 100) / 10 : 0);
+    return { steps, stepsEst: !realSteps && !!est, km, kmEst: !realKm && !!km };
+  }
+
   function renderRecStats() {
     $('statTotal').textContent = r1(recTotal(rec));
     $('statFast').textContent = r1(rec.fast || 0);
     $('statRounds').textContent = rec.roundsPlanned ? `${rec.rounds || 0}/${rec.roundsPlanned}` : (rec.rounds || 0);
+    const m = movement(rec);
+    $('statSteps').textContent = m.steps ? (m.stepsEst ? '≈ ' : '') + m.steps.toLocaleString('en') : '-';
+    $('statStepsLbl').textContent = m.stepsEst ? 'خطوة (تقدير بالوقت)' : 'خطوة';
+    $('statDist').textContent = m.km ? (m.kmEst ? '≈ ' : '') + m.km : '-';
+    $('statDistLbl').textContent = m.kmEst ? 'كم (تقدير)' : 'كم';
   }
 
   function renderEffort() {
@@ -1244,8 +1266,9 @@
     if (r.roundsPlanned) L.push(`الجولات المكتملة: ${r.rounds || 0} من ${r.roundsPlanned}${r.completed ? ' (أكملت الخطة)' : ' (أوقفتها مبكرًا)'}`);
     else if (r.rounds) L.push(`الجولات: ${r.rounds}`);
     if (r.effort) L.push(`الإحساس بالجهد في الفترات السريعة: ${r.effort}/10`);
-    if (r.distance) L.push(`المسافة: ${r.distance} كم`);
-    if (r.steps) L.push(`الخطوات: ${r.steps}`);
+    { const m = movement(r);
+      if (m.km) L.push(`المسافة${m.kmEst ? ' (تقدير من الوقت)' : ''}: ${m.km} كم`);
+      if (m.steps) L.push(`الخطوات${m.stepsEst ? ' (تقدير من الوقت)' : ''}: ${m.steps}`); }
     if (r.hr) L.push(`متوسط النبض: ${r.hr}`);
     if (r.notes && r.notes.trim()) L.push(`ملاحظات: ${r.notes.trim()}`);
     return L;
