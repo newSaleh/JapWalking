@@ -995,6 +995,7 @@
     $('session').hidden = id !== 'session';
     themeMetas.forEach((m, i) => { m.content = id === 'session' ? '#000000' : themeOrig[i]; });
     window.scrollTo(0, 0);
+    if (id === 'setup') applyUpdate();
   }
 
   // ---------- session engine ----------
@@ -1340,9 +1341,32 @@
     }
   });
 
-  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+  // ---------- auto update ----------
+  // A new sw.js version activates in the background; the page then reloads itself,
+  // but never in the middle of a walk or while a finished session is on screen.
+  let updatePending = false;
+  function applyUpdate() {
+    if (!updatePending || S || $('setup').hidden) return;
+    updatePending = false;
+    try { sessionStorage.setItem('jw-updated', '1'); } catch {}
+    location.reload();
   }
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    let hadController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadController) { hadController = true; return; } // first install, nothing to refresh
+      updatePending = true;
+      applyUpdate();
+    });
+    navigator.serviceWorker.register('sw.js').then((reg) => {
+      const check = () => reg.update().catch(() => {});
+      document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') check(); });
+      setInterval(check, 30 * 60 * 1000);
+    }).catch(() => {});
+  }
+  try {
+    if (sessionStorage.getItem('jw-updated')) { sessionStorage.removeItem('jw-updated'); setTimeout(() => toast('تم تحديث التطبيق ✓'), 300); }
+  } catch {}
 
   renderSetup();
 
