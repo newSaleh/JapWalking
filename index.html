@@ -495,8 +495,7 @@
           <button type="button" class="link-btn" id="testSound">تجربة 🔈</button>
         </div>
         <div class="chips" id="soundChips">
-          <button type="button" data-v="voice">نغمة + كلام</button>
-          <button type="button" data-v="tones">نغمة فقط</button>
+          <button type="button" data-v="tones">نغمة</button>
           <button type="button" data-v="off">بدون صوت</button>
         </div>
         <label class="toggle" id="loudRow">
@@ -648,10 +647,10 @@
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   const PHASES = {
-    warm: { name: 'تسخين', say: 'تسخين', color: '--warm' },
-    fast: { name: 'مشي سريع', say: 'مشي سريع', color: '--fast' },
-    slow: { name: 'مشي هادئ', say: 'مشي هادئ', color: '--slow' },
-    cool: { name: 'تهدئة', say: 'تهدئة', color: '--cool' },
+    warm: { name: 'تسخين', color: '--warm' },
+    fast: { name: 'مشي سريع', color: '--fast' },
+    slow: { name: 'مشي هادئ', color: '--slow' },
+    cool: { name: 'تهدئة', color: '--cool' },
   };
   const ORDER = ['warm', 'fast', 'slow', 'cool'];
   const KEYS = ['fast', 'slow', 'rounds', 'warm', 'cool'];
@@ -678,9 +677,8 @@
 
   const settings = pick(defaultPreset() || SEED[0]);
 
-  const canSpeak = 'speechSynthesis' in window;
-  let soundMode = store.get('jw-sound', canSpeak ? 'voice' : 'tones');
-  if (soundMode === 'voice' && !canSpeak) soundMode = 'tones';
+  let soundMode = store.get('jw-sound', 'tones');
+  if (soundMode !== 'off') soundMode = 'tones'; // spoken cues were removed
 
   // ---------- sessions history ----------
   let sessions = store.get('jw-sessions', []);
@@ -805,7 +803,6 @@
       st.querySelector('[data-d="1"]').disabled = v >= +st.dataset.max;
     });
     $('soundChips').querySelectorAll('button').forEach((b) => {
-      b.hidden = b.dataset.v === 'voice' && !canSpeak;
       b.setAttribute('aria-pressed', String(b.dataset.v === soundMode));
     });
     $('loudRow').hidden = !('audioSession' in navigator) || soundMode === 'off';
@@ -853,12 +850,12 @@
     store.set('jw-sound', soundMode);
     renderSetup();
     initAudio();
-    if (soundMode !== 'off') cue('fast', { round: 1 });
+    if (soundMode !== 'off') cue('fast');
   });
   $('testSound').addEventListener('click', () => {
     initAudio();
     if (soundMode === 'off') toast('الصوت مغلق، اختر «نغمة» أولًا');
-    else cue('fast', { round: 1 });
+    else cue('fast');
   });
   $('loudToggle').addEventListener('change', (e) => {
     loud = e.target.checked;
@@ -909,7 +906,7 @@
   });
   $('copyHistoryBtn').addEventListener('click', () => copyText(historyReport()));
 
-  // ---------- sound, voice & haptics ----------
+  // ---------- sound & haptics ----------
   // iPhone mutes web audio when the ring switch is on silent, unless the audio session is "playback"
   let loud = store.get('jw-loud', true);
   let ac = null;
@@ -942,29 +939,13 @@
       o.stop(t + dur + 0.05);
     });
   }
-  let arVoice;
-  const findVoice = () => { try { arVoice = speechSynthesis.getVoices().find((v) => /^ar/i.test(v.lang)); } catch {} };
-  if (canSpeak) { findVoice(); try { speechSynthesis.addEventListener('voiceschanged', findVoice); } catch {} }
-  function speak(text) {
-    if (soundMode !== 'voice' || !canSpeak) return;
-    try {
-      speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = 'ar-SA';
-      if (arVoice) u.voice = arVoice;
-      speechSynthesis.speak(u);
-    } catch {}
-  }
   const vibrate = (p) => { if (soundMode !== 'off' && navigator.vibrate) try { navigator.vibrate(p); } catch {} };
-  function cue(type, p) {
+  function cue(type) {
     // rising = speed up, falling = slow down
     if (type === 'fast') { tone(659, 1.2); tone(880, 1.6, .22); vibrate([200, 80, 200]); }
     else if (type === 'slow') { tone(880, 1.2); tone(659, 1.6, .22); vibrate([400]); }
     else if (type === 'done') { [523, 659, 784, 1047].forEach((f, i) => tone(f, 1.6, i * .18)); vibrate([150, 60, 150, 60, 300]); }
     else { tone(740, 1.6); vibrate([250]); }
-    let text = type === 'done' ? 'انتهى التمرين. أحسنت' : PHASES[type].say;
-    if (type === 'fast' && p && p.round) text = `الجولة ${p.round}. ${text}`;
-    setTimeout(() => speak(text), 800);
   }
   const countTick = () => { tone(1175, .25, 0, .07); vibrate(40); };
   function flash() {
@@ -1027,7 +1008,6 @@
 
   function start() {
     initAudio();
-    if (canSpeak && soundMode === 'voice') speak(' '); // unlock speech on iOS inside the tap
     begin({ cfg: pick(settings), running: true, startAt: Date.now(), before: 0, skipped: { warm: 0, fast: 0, slow: 0, cool: 0 }, startedAt: Date.now(), recId: null }, true);
   }
 
@@ -1061,7 +1041,7 @@
       S.idx = i;
       S.lastSec = null;
       setPhaseUI(i);
-      if (S.running && !S.silent) { cue(S.plan[i].type, S.plan[i]); flash(); }
+      if (S.running && !S.silent) { cue(S.plan[i].type); flash(); }
     }
     const p = S.plan[i];
     const left = p.start + p.dur - e;
