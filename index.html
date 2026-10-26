@@ -539,6 +539,18 @@
       <div id="historyList"></div>
     </article>
 
+    <details class="card" id="bkp" style="margin-top:14px;padding:16px 18px">
+      <summary style="font-weight:600;cursor:pointer">نسخة احتياطية لكل بياناتي</summary>
+      <p class="note" style="margin:10px 0">قبل حذف التطبيق أو إعادة تثبيته: اضغط «نسخ كل البيانات»، ثم ألصقها في ملاحظة أو أرسلها لنفسك. وفي التطبيق الجديد: ألصقها في الخانة واضغط «استعادة».</p>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="link-btn" id="bkpExport">نسخ كل البيانات</button>
+        <button class="link-btn" id="bkpSave">حفظ كملف</button>
+        <span id="bkpMsg" class="note" style="margin:0"></span>
+      </div>
+      <div class="field" style="margin-top:10px"><textarea id="bkpText" dir="ltr" placeholder="الصق هنا النسخة الاحتياطية للاستعادة"></textarea></div>
+      <button class="link-btn" id="bkpImport">استعادة</button>
+    </details>
+
 
     <p class="note">توقّف فورًا عند ألم في الصدر أو دوخة، واستشر طبيبك إن كانت لديك حالة صحية.</p>
   </section>
@@ -1323,6 +1335,50 @@
     if (!rec) return;
     try { await navigator.share({ text: recordReport(rec) }); } catch {}
   });
+
+  // ---------- backup / restore (all walking data) ----------
+  const bkpMsg = (t) => { $('bkpMsg').textContent = t; setTimeout(() => { $('bkpMsg').textContent = ''; }, 3000); };
+  function backupText() {
+    const data = {};
+    try { Object.keys(localStorage).forEach((k) => { if (k.indexOf('jw-') === 0 && k !== 'jw-active') data[k] = localStorage.getItem(k); }); } catch {}
+    return JSON.stringify({ walkBackup: 1, at: new Date().toISOString(), data });
+  }
+  $('bkpExport').addEventListener('click', async () => {
+    const t = backupText();
+    $('bkpText').value = t;
+    try { await navigator.clipboard.writeText(t); bkpMsg('تم النسخ'); }
+    catch { $('bkpText').focus(); $('bkpText').select(); try { document.execCommand('copy'); bkpMsg('تم النسخ'); } catch { bkpMsg('تعذّر النسخ، انسخ النص يدويًا'); } }
+  });
+  $('bkpSave').addEventListener('click', () => {
+    const blob = new Blob([backupText()], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'walk-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+  });
+  $('bkpImport').addEventListener('click', () => {
+    let o = null;
+    try { o = JSON.parse($('bkpText').value.trim()); } catch {}
+    if (!o || !(o.walkBackup || o.trainingBackup) || !o.data || typeof o.data !== 'object') { bkpMsg('النص غير صالح'); return; }
+    const keys = Object.keys(o.data).filter((k) => k.indexOf('jw-') === 0 && k !== 'jw-active' && typeof o.data[k] === 'string');
+    if (!keys.length) { bkpMsg('لا توجد بيانات مشي في النص'); return; }
+    if (!confirm('ستُدمج الجلسات المستعادة مع الموجودة (دون حذف شيء)، وتحل الإعدادات المستعادة محل الحالية. متابعة؟')) return;
+    try {
+      keys.forEach((k) => {
+        if (k === 'jw-sessions') {
+          let inc = []; try { inc = JSON.parse(o.data[k]) || []; } catch {}
+          const have = new Set(sessions.map((x) => x.id));
+          inc.forEach((x) => { if (x && !have.has(x.id)) sessions.push(x); });
+          saveSessions();
+        } else localStorage.setItem(k, o.data[k]);
+      });
+    } catch { bkpMsg('تعذّرت الاستعادة'); return; }
+    bkpMsg('تمت الاستعادة');
+    setTimeout(() => location.reload(), 600);
+  });
+  // ask the browser not to evict this app's storage
+  try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch {}
 
   // ---------- no zoom (pinch or double-tap) ----------
   ['gesturestart', 'gesturechange', 'gestureend'].forEach((ev) => document.addEventListener(ev, (e) => e.preventDefault(), { passive: false }));
