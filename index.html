@@ -1369,7 +1369,7 @@
 (function(){
   try{
     var r=document.referrer||"";
-    if(r.indexOf("/Training/")>-1){
+    if(r.indexOf("/Training/")>-1 && window.top===window){
       var a=document.getElementById("backLink");
       a.hidden=false; a.style.display="inline-block";
       a.addEventListener("click",function(e){e.preventDefault(); if(history.length>1) history.back(); else location.href=r;});
