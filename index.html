@@ -537,18 +537,6 @@
       <div id="historyList"></div>
     </article>
 
-    <article class="card principles">
-      <h2>مبادئ المشي الياباني</h2>
-      <p>طريقة طوّرها باحثون في جامعة شينشو اليابانية: بدل المشي بسرعة ثابتة، تتناوب بين فترات سريعة وهادئة.</p>
-      <ol>
-        <li><div><b>3 دقائق سريع، 3 دقائق هادئ</b><span>هذا هو الأساس. كرّرها 5 مرات فتصير 30 دقيقة.</span></div></li>
-        <li><div><b>السريع ≈ 70% من جهدك</b><span>تتنفّس بقوة وتستطيع الكلام بجمل قصيرة فقط. «متعب قليلًا» لا «منهك».</span></div></li>
-        <li><div><b>الهادئ ≈ 40% من جهدك</b><span>مشي مريح تستعيد فيه أنفاسك، لا تتوقّف.</span></div></li>
-        <li><div><b>4 أيام في الأسبوع على الأقل</b><span>الاستمرار أهم من الشدّة. الهدف ~60 دقيقة سريعة أسبوعيًا.</span></div></li>
-        <li><div><b>الوضعية</b><span>ظهر مستقيم ونظر للأمام، خطوة أوسع من المعتاد، الهبوط على الكعب، والذراعان مثنيّتان بزاوية 90° تتأرجحان.</span></div></li>
-        <li><div><b>تدرّج</b><span>إن كنت مبتدئًا ابدأ بجولتين أو ثلاث وزد جولة كل أسبوع.</span></div></li>
-      </ol>
-    </article>
 
     <p class="note">توقّف فورًا عند ألم في الصدر أو دوخة، واستشر طبيبك إن كانت لديك حالة صحية.</p>
   </section>
@@ -976,6 +964,7 @@
   const themeMetas = [...document.querySelectorAll('meta[name="theme-color"]')];
   const themeOrig = themeMetas.map((m) => m.content);
   function show(id) {
+    try { if (window.parent !== window) window.parent.postMessage({ jw: 'screen', id: id }, '*'); } catch (e) {}
     $('setup').hidden = id !== 'setup';
     $('record').hidden = id !== 'record';
     $('session').hidden = id !== 'session';
