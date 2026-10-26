@@ -1,5 +1,5 @@
 // Offline support: network-first for the page, stale-while-revalidate for assets and fonts.
-const CACHE = 'jw-v2';
+const CACHE = 'jw-v3';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icons/apple-touch-icon.png', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', (e) => {
