@@ -8,8 +8,12 @@
 <meta name="theme-color" content="#f6f3ee" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#141312" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="المشي الياباني">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23c8553d'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='sans-serif'%3E%E6%AD%A9%3C/text%3E%3C/svg%3E">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="مشي ياباني">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
@@ -23,6 +27,7 @@
     --line: #e7e1d7;
     --accent: #c8553d;
     --accent-ink: #ffffff;
+    --danger: #b9382a;
     --fast: #d9583b;
     --slow: #2f8f83;
     --warm: #d4952a;
@@ -40,6 +45,7 @@
       --muted: #a39d93;
       --line: #2f2c28;
       --accent: #e0684d;
+      --danger: #ef6a5a;
       --fast: #ef7556;
       --slow: #4fb3a5;
       --warm: #e8b04a;
@@ -56,6 +62,7 @@
     --muted: #a39d93;
     --line: #2f2c28;
     --accent: #e0684d;
+    --danger: #ef6a5a;
     --fast: #ef7556;
     --slow: #4fb3a5;
     --warm: #e8b04a;
@@ -86,14 +93,7 @@
   }
 
   /* Header */
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin: 4px 0 20px;
-  }
-  .brand { display: flex; align-items: center; gap: 12px; }
+  header { display: flex; align-items: center; gap: 12px; margin: 4px 0 18px; }
   .mark {
     width: 44px; height: 44px;
     border-radius: 50%;
@@ -105,16 +105,7 @@
     flex: none;
   }
   h1 { font-size: 20px; margin: 0; line-height: 1.2; font-weight: 700; }
-  .brand p { margin: 0; font-size: 13px; color: var(--muted); }
-  .icon-btn {
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    border: 1px solid var(--line);
-    background: var(--surface);
-    display: grid; place-items: center;
-    flex: none;
-  }
-  .icon-btn svg { width: 20px; height: 20px; }
+  header p { margin: 0; font-size: 13px; color: var(--muted); }
 
   .card {
     background: var(--surface);
@@ -122,74 +113,92 @@
     border-radius: var(--radius);
     box-shadow: var(--shadow);
   }
+  .section-title {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 13px; color: var(--muted);
+    margin: 0 4px 8px;
+  }
+
+  /* Presets */
+  .presets {
+    display: flex; gap: 8px;
+    overflow-x: auto;
+    margin: 0 -16px 14px;
+    padding: 2px 16px 4px;
+    scrollbar-width: none;
+  }
+  .presets::-webkit-scrollbar { display: none; }
+  .preset {
+    flex: none;
+    display: inline-flex; align-items: center;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    padding: 0 4px;
+  }
+  .preset button { background: none; border: 0; height: 100%; padding: 0 10px; font-weight: 500; font-size: 14.5px; white-space: nowrap; }
+  .preset.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .preset .p-del { color: var(--danger); font-size: 18px; padding: 0 8px; }
+  .preset .p-star { padding: 0 6px; }
+  .preset.active .p-del { color: inherit; }
+  .preset.add { border-style: dashed; color: var(--muted); }
+  .preset.ghost { border-color: transparent; background: none; color: var(--muted); }
 
   /* Settings */
-  .settings { padding: 6px 18px; }
+  .settings { padding: 4px 18px; }
   .row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 14px 0;
+    padding: 13px 0;
     border-bottom: 1px solid var(--line);
   }
   .row:last-child { border-bottom: 0; }
-  .row.stack { flex-direction: column; align-items: stretch; gap: 10px; }
   .label { display: flex; align-items: center; gap: 10px; font-weight: 500; }
   .label small { display: block; color: var(--muted); font-weight: 400; font-size: 12.5px; line-height: 1.3; }
-  .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; display: inline-block; }
 
   .stepper { display: flex; align-items: center; gap: 4px; }
   .stepper button {
-    width: 38px; height: 38px;
+    width: 40px; height: 40px;
     border-radius: 12px;
     border: 1px solid var(--line);
     background: var(--surface-2);
     font-size: 20px;
     line-height: 1;
     display: grid; place-items: center;
+    touch-action: manipulation;
+    user-select: none; -webkit-user-select: none;
     transition: transform .1s;
   }
   .stepper button:active { transform: scale(.92); }
   .stepper button:disabled { opacity: .35; cursor: default; }
-  .stepper output { min-width: 48px; text-align: center; font-size: 20px; font-weight: 700; }
+  .stepper output { min-width: 56px; text-align: center; font-size: 20px; font-weight: 700; }
   .stepper output span { font-size: 12px; font-weight: 400; color: var(--muted); margin-inline-start: 2px; }
+  .stepper output.off { font-size: 15px; font-weight: 500; color: var(--muted); }
 
   .chips { display: flex; gap: 6px; }
   .chips button {
     flex: 1;
     height: 38px;
+    padding: 0 12px;
     border-radius: 12px;
     border: 1px solid var(--line);
     background: var(--surface-2);
     font-size: 14px;
     font-weight: 500;
-    transition: background .15s, color .15s, border-color .15s;
   }
-  .chips button[aria-pressed="true"] {
-    background: var(--text);
-    color: var(--bg);
-    border-color: var(--text);
-  }
+  .chips button[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
 
   /* Summary + timeline */
   .summary { margin: 18px 4px 14px; }
   .summary-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
   .summary-top b { font-size: 26px; }
-  .summary-top span { color: var(--muted); font-size: 14px; }
-  .timeline {
-    position: relative;
-    display: flex;
-    gap: 3px;
-    height: 12px;
-    border-radius: 6px;
-    overflow: hidden;
-  }
+  .summary-top .plan { color: var(--muted); font-size: 14px; }
+  .timeline { position: relative; display: flex; gap: 3px; height: 12px; border-radius: 6px; overflow: hidden; }
   .timeline i { display: block; height: 100%; border-radius: 3px; opacity: .9; }
-  .timeline.live { height: 10px; }
-  .timeline.live i { opacity: .28; transition: opacity .3s; }
-  .timeline.live i.past { opacity: .9; }
-  .timeline.live i.now { opacity: 1; }
   .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px; font-size: 12.5px; color: var(--muted); }
   .legend span { display: inline-flex; align-items: center; gap: 6px; }
 
@@ -208,15 +217,44 @@
   }
   .primary:active { transform: scale(.98); }
   .primary svg { width: 22px; height: 22px; }
+  .secondary {
+    height: 50px;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    font-weight: 500;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .secondary svg { width: 19px; height: 19px; }
+  .link-btn { background: none; border: 0; color: var(--accent); font-weight: 500; font-size: 13.5px; padding: 6px 4px; }
+  .link-btn.danger { color: var(--danger); }
 
   /* Week streak */
   .week { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 14px 4px 0; font-size: 13.5px; color: var(--muted); }
   .week-dots { display: flex; gap: 6px; }
-  .week-dots i { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--line); background: transparent; }
+  .week-dots i { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--line); }
   .week-dots i.on { background: var(--slow); border-color: var(--slow); }
 
+  /* History */
+  .history { margin-top: 26px; padding: 16px 18px 6px; }
+  .card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+  .card-head h2 { font-size: 17px; margin: 0; }
+  .card-head div { display: flex; gap: 4px; }
+  .h-row {
+    width: 100%;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 11px 0;
+    background: none; border: 0; border-top: 1px solid var(--line);
+    text-align: start;
+  }
+  .h-row b { display: block; font-weight: 500; font-size: 14.5px; }
+  .h-row small { color: var(--muted); font-size: 12.5px; }
+  .h-num { text-align: end; flex: none; }
+  .h-num b { font-size: 17px; font-weight: 700; }
+  .empty { color: var(--muted); font-size: 14px; padding: 8px 0 12px; margin: 0; }
+
   /* Principles */
-  .principles { margin-top: 26px; padding: 20px 18px 8px; }
+  .principles { margin-top: 18px; padding: 20px 18px 8px; }
   .principles h2 { font-size: 17px; margin: 0 0 4px; }
   .principles > p { margin: 0 0 12px; color: var(--muted); font-size: 14px; }
   .principles ol { list-style: none; margin: 0; padding: 0; counter-reset: p; }
@@ -242,60 +280,137 @@
   .principles li span { color: var(--muted); }
   .note { font-size: 12.5px; color: var(--muted); margin: 14px 4px 0; text-align: center; }
 
-  /* Session */
-  #session { text-align: center; }
-  .phase-pill {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 8px 18px;
-    border-radius: 999px;
-    font-weight: 700;
-    font-size: 18px;
-    color: #fff;
-    background: var(--phase);
-    transition: background .4s;
+  /* Session: pure black for OLED battery saving, only the time is bright */
+  #session {
+    --fast: #ff7a59;
+    --slow: #3fd0b8;
+    --warm: #f5b941;
+    --cool: #7fa9ee;
+    position: fixed; inset: 0; z-index: 20;
+    background: #000;
+    color: #f2eee8;
+    display: flex; flex-direction: column;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    user-select: none; -webkit-user-select: none;
+    touch-action: manipulation;
+    overflow: hidden;
   }
-  .round { margin-top: 10px; color: var(--muted); font-size: 14px; }
-  .ring-wrap { position: relative; width: min(78vw, 300px); aspect-ratio: 1; margin: 18px auto 10px; }
-  .ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-  .ring-bg { stroke: var(--surface-2); }
-  .ring-fg { stroke: var(--phase); transition: stroke .4s; stroke-linecap: round; }
-  .ring-center { position: absolute; inset: 0; display: grid; place-content: center; gap: 2px; }
-  .time { font-size: clamp(56px, 18vw, 76px); font-weight: 700; line-height: 1; letter-spacing: -1px; }
-  .hint { color: var(--muted); font-size: 14px; max-width: 70%; margin: 6px auto 0; line-height: 1.5; }
-  .next { margin: 6px 0 18px; font-size: 15px; }
-  .next b { color: var(--next, var(--text)); }
-  .totals { display: flex; justify-content: space-between; margin-top: 8px; font-size: 13px; color: var(--muted); }
+  .s-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 22px 0;
+    font-size: 18px; font-weight: 700;
+    opacity: .55;
+  }
+  .s-phase { color: var(--phase); }
+  .s-round { color: #a39d93; font-weight: 500; }
+  .s-time {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--phase);
+    font-weight: 700;
+    line-height: .9;
+    letter-spacing: -.03em;
+    font-size: min(30vw, 46vh);
+  }
+  .s-time.short { font-size: min(39vw, 52vh); }
+  .s-pbar { position: relative; height: 6px; margin: 0 22px 26px; background: #161616; border-radius: 3px; overflow: hidden; opacity: .6; }
+  .s-pbar i { position: absolute; inset-block: 0; inset-inline-start: 0; background: var(--phase); border-radius: 3px; }
+  #session.paused .s-time { opacity: .35; }
+  .s-paused { display: none; color: #f2eee8; }
+  #session.paused .s-paused { display: inline; }
+  #session.paused .s-round { display: none; }
 
-  .controls { display: grid; grid-template-columns: 1fr 1.6fr 1fr; gap: 10px; margin-top: 22px; align-items: center; }
+  .s-ui {
+    position: absolute; inset-inline: 0; bottom: 0;
+    padding: 40px 16px calc(18px + env(safe-area-inset-bottom));
+    background: linear-gradient(rgba(0,0,0,0), #000 28%);
+    opacity: 0; pointer-events: none;
+    transition: opacity .2s;
+  }
+  .s-ui.show { opacity: 1; pointer-events: auto; }
+  .s-ui-inner { max-width: 460px; margin: 0 auto; }
+  .s-next { text-align: center; font-size: 15px; margin-bottom: 12px; color: #d8d3cb; }
+  .s-ui .timeline { height: 8px; }
+  .s-ui .timeline i { opacity: .25; }
+  .s-ui .timeline i.past { opacity: .8; }
+  .s-ui .timeline i.now { opacity: 1; }
+  .totals { display: flex; justify-content: space-between; margin-top: 8px; font-size: 13px; color: #a39d93; }
+  .s-tip { text-align: center; font-size: 12.5px; color: #8a857e; margin-top: 12px; }
+  .controls { display: grid; grid-template-columns: 1fr 1.6fr 1fr; gap: 10px; margin-top: 16px; align-items: center; }
   .ctrl {
-    height: 56px;
+    height: 58px;
     border-radius: 18px;
-    border: 1px solid var(--line);
-    background: var(--surface);
+    border: 1px solid #2a2826;
+    background: #121110;
+    color: #f2eee8;
     display: flex; align-items: center; justify-content: center; gap: 6px;
     font-size: 14px; font-weight: 500;
   }
   .ctrl svg { width: 20px; height: 20px; }
-  .ctrl.main { height: 64px; background: var(--text); color: var(--bg); border-color: var(--text); font-size: 17px; font-weight: 700; }
+  .ctrl.main { height: 66px; background: #f2eee8; color: #000; border-color: #f2eee8; font-size: 17px; font-weight: 700; }
   .ctrl.main svg { width: 24px; height: 24px; }
-  .paused .time { opacity: .45; }
 
-  /* Done */
-  #done { text-align: center; padding-top: 30px; }
+  /* Record (done / details) */
+  #record { padding-top: 6px; }
+  .rec-top { text-align: center; margin-bottom: 18px; }
   .done-mark {
-    width: 96px; height: 96px; border-radius: 50%;
-    margin: 0 auto 18px;
+    width: 84px; height: 84px; border-radius: 50%;
+    margin: 6px auto 14px;
     background: color-mix(in srgb, var(--slow) 16%, transparent);
     color: var(--slow);
     display: grid; place-items: center;
   }
-  .done-mark svg { width: 48px; height: 48px; }
-  #done h2 { margin: 0 0 6px; font-size: 24px; }
-  #done p { margin: 0 0 24px; color: var(--muted); }
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
-  .stats div { padding: 14px 6px; }
+  .done-mark svg { width: 42px; height: 42px; }
+  .rec-top h2 { margin: 0 0 2px; font-size: 24px; }
+  .rec-top p { margin: 0; color: var(--muted); font-size: 14px; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+  .stats div { padding: 12px 6px; text-align: center; }
   .stats b { display: block; font-size: 24px; line-height: 1.2; }
   .stats span { font-size: 12.5px; color: var(--muted); }
+  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .actions.single { grid-template-columns: 1fr; }
+  .continue { margin-bottom: 10px; width: 100%; }
+
+  .edit { padding: 16px 18px 18px; margin-top: 8px; }
+  .edit h3 { margin: 0 0 12px; font-size: 16px; }
+  .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted); margin-bottom: 4px; }
+  .field input, .field textarea {
+    width: 100%;
+    height: 46px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--text);
+    font: inherit;
+    font-size: 16px;
+    padding: 0 12px;
+  }
+  .field textarea { height: 84px; padding: 10px 12px; resize: vertical; line-height: 1.5; }
+  .field input:focus, .field textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .effort { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+  .effort button {
+    height: 38px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--surface-2);
+    font-size: 14px; font-weight: 500; padding: 0;
+  }
+  .effort button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .effort-scale { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--muted); margin-top: 4px; }
+  .rec-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; }
+
+  .toast {
+    position: fixed; z-index: 50;
+    left: 50%; bottom: calc(24px + env(safe-area-inset-bottom));
+    transform: translate(-50%, 10px);
+    background: var(--text); color: var(--bg);
+    padding: 10px 18px; border-radius: 999px;
+    font-size: 14px; font-weight: 500;
+    opacity: 0; pointer-events: none;
+    transition: opacity .2s, transform .2s;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; }
@@ -304,23 +419,24 @@
 </head>
 <body>
 <main class="app">
-  <header>
-    <div class="brand">
+
+  <!-- Setup -->
+  <section id="setup">
+    <header>
       <div class="mark" aria-hidden="true">歩</div>
       <div>
         <h1>المشي الياباني</h1>
         <p>Interval Walking Training</p>
       </div>
-    </div>
-    <button class="icon-btn" id="soundBtn" aria-label="الصوت"></button>
-  </header>
+    </header>
 
-  <!-- Setup -->
-  <section id="setup">
+    <div class="section-title"><span>قوالبك · ★ يفتح تلقائيًا</span></div>
+    <div class="presets" id="presets"></div>
+
     <div class="card settings">
       <div class="row">
         <div class="label"><i class="dot" style="background:var(--fast)"></i><div>مشي سريع<small>مدة كل فترة</small></div></div>
-        <div class="stepper" data-key="fast" data-min="1" data-max="10">
+        <div class="stepper" data-key="fast" data-min="1" data-max="15">
           <button type="button" data-d="1" aria-label="زيادة">+</button>
           <output class="num"></output>
           <button type="button" data-d="-1" aria-label="إنقاص">−</button>
@@ -328,43 +444,48 @@
       </div>
       <div class="row">
         <div class="label"><i class="dot" style="background:var(--slow)"></i><div>مشي هادئ<small>مدة كل فترة</small></div></div>
-        <div class="stepper" data-key="slow" data-min="1" data-max="10">
+        <div class="stepper" data-key="slow" data-min="1" data-max="15">
           <button type="button" data-d="1" aria-label="زيادة">+</button>
           <output class="num"></output>
           <button type="button" data-d="-1" aria-label="إنقاص">−</button>
         </div>
       </div>
       <div class="row">
-        <div class="label"><div>عدد الجولات<small>الجولة = سريع + هادئ</small></div></div>
-        <div class="stepper" data-key="rounds" data-min="1" data-max="12">
+        <div class="label"><i class="dot" style="background:var(--text)"></i><div>عدد الجولات<small>الجولة = سريع + هادئ</small></div></div>
+        <div class="stepper" data-key="rounds" data-min="1" data-max="15">
           <button type="button" data-d="1" aria-label="زيادة">+</button>
           <output class="num"></output>
           <button type="button" data-d="-1" aria-label="إنقاص">−</button>
         </div>
       </div>
-      <div class="row stack">
-        <div class="label"><i class="dot" style="background:var(--warm)"></i><div>تسخين في البداية</div></div>
-        <div class="chips" data-key="warm">
-          <button type="button" data-v="0">بدون</button>
-          <button type="button" data-v="2">2 د</button>
-          <button type="button" data-v="3">3 د</button>
-          <button type="button" data-v="5">5 د</button>
-          <button type="button" data-v="10">10 د</button>
+      <div class="row">
+        <div class="label"><i class="dot" style="background:var(--warm)"></i><div>تسخين<small>في البداية</small></div></div>
+        <div class="stepper" data-key="warm" data-min="0" data-max="30">
+          <button type="button" data-d="1" aria-label="زيادة">+</button>
+          <output class="num"></output>
+          <button type="button" data-d="-1" aria-label="إنقاص">−</button>
         </div>
       </div>
-      <div class="row stack">
-        <div class="label"><i class="dot" style="background:var(--cool)"></i><div>تهدئة في النهاية</div></div>
-        <div class="chips" data-key="cool">
-          <button type="button" data-v="0">بدون</button>
-          <button type="button" data-v="2">2 د</button>
-          <button type="button" data-v="3">3 د</button>
-          <button type="button" data-v="5">5 د</button>
+      <div class="row">
+        <div class="label"><i class="dot" style="background:var(--cool)"></i><div>تهدئة<small>في النهاية</small></div></div>
+        <div class="stepper" data-key="cool" data-min="0" data-max="30">
+          <button type="button" data-d="1" aria-label="زيادة">+</button>
+          <output class="num"></output>
+          <button type="button" data-d="-1" aria-label="إنقاص">−</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="label"><div>التنبيه<small>عند تغيّر المرحلة</small></div></div>
+        <div class="chips" id="soundChips">
+          <button type="button" data-v="voice">كلام</button>
+          <button type="button" data-v="tones">نغمات</button>
+          <button type="button" data-v="off">صامت</button>
         </div>
       </div>
     </div>
 
     <div class="summary">
-      <div class="summary-top"><b><span class="num" id="totalMin" style="font-size:inherit;color:inherit"></span> دقيقة</b><span id="summaryText"></span></div>
+      <div class="summary-top"><b><span class="num" id="totalMin"></span> دقيقة</b><span class="plan" id="summaryText"></span></div>
       <div class="timeline" id="previewBar"></div>
       <div class="legend" id="legend"></div>
     </div>
@@ -378,6 +499,17 @@
       <span>آخر ٧ أيام · الهدف ٤ أيام</span>
       <div class="week-dots" id="weekDots"></div>
     </div>
+
+    <article class="card history">
+      <div class="card-head">
+        <h2>السجل</h2>
+        <div>
+          <button class="link-btn" id="copyHistoryBtn">نسخ للتقييم</button>
+          <button class="link-btn" id="addManualBtn">+ إضافة</button>
+        </div>
+      </div>
+      <div id="historyList"></div>
+    </article>
 
     <article class="card principles">
       <h2>مبادئ المشي الياباني</h2>
@@ -395,123 +527,265 @@
     <p class="note">توقّف فورًا عند ألم في الصدر أو دوخة، واستشر طبيبك إن كانت لديك حالة صحية.</p>
   </section>
 
-  <!-- Session -->
-  <section id="session" hidden>
-    <div class="phase-pill" id="phaseName"></div>
-    <div class="round" id="roundText"></div>
-
-    <div class="ring-wrap">
-      <svg viewBox="0 0 240 240" aria-hidden="true">
-        <circle class="ring-bg" cx="120" cy="120" r="108" fill="none" stroke-width="14"/>
-        <circle class="ring-fg" id="ring" cx="120" cy="120" r="108" fill="none" stroke-width="14"/>
-      </svg>
-      <div class="ring-center">
-        <div class="time num" id="timeText">0:00</div>
-        <div class="hint" id="hintText"></div>
+  <!-- Record: shown after a session and when opening one from the history -->
+  <section id="record" hidden>
+    <div class="rec-top">
+      <div class="done-mark" id="doneMark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
       </div>
+      <h2 id="recTitle"></h2>
+      <p id="recSub"></p>
     </div>
 
-    <div class="next" id="nextText"></div>
-
-    <div class="timeline live" id="liveBar"></div>
-    <div class="totals">
-      <span>مضى <b class="num" id="elapsedText">0:00</b></span>
-      <span>متبقٍّ <b class="num" id="remainText">0:00</b></span>
-    </div>
-
-    <div class="controls">
-      <button class="ctrl" id="stopBtn" aria-label="إنهاء">
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
-        إنهاء
-      </button>
-      <button class="ctrl main" id="pauseBtn"></button>
-      <button class="ctrl" id="skipBtn" aria-label="التالي">
-        التالي
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 6.5v11l8.5-5.5L6 6.5z"/><rect x="17" y="6" width="2" height="12" rx="1"/></svg>
-      </button>
-    </div>
-  </section>
-
-  <!-- Done -->
-  <section id="done" hidden>
-    <div class="done-mark">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
-    </div>
-    <h2>أحسنت!</h2>
-    <p id="doneText"></p>
     <div class="stats">
       <div class="card"><b class="num" id="statTotal"></b><span>دقيقة إجمالًا</span></div>
       <div class="card"><b class="num" id="statFast"></b><span>دقيقة سريعة</span></div>
-      <div class="card"><b class="num" id="statWeek"></b><span>أيام هذا الأسبوع</span></div>
+      <div class="card"><b class="num" id="statRounds"></b><span>جولات</span></div>
     </div>
-    <button class="primary" id="againBtn">رجوع</button>
+
+    <button class="primary continue" id="continueBtn"></button>
+
+    <div class="actions" id="recActions">
+      <button class="secondary" id="copyBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>
+        نسخ للتقييم
+      </button>
+      <button class="secondary" id="shareBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7.5 7.5L12 3l4.5 4.5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
+        مشاركة
+      </button>
+    </div>
+
+    <div class="card edit">
+      <h3>بيانات الجلسة <small style="color:var(--muted);font-weight:400;font-size:12.5px">· عدّل ما تريد، يُحفظ تلقائيًا</small></h3>
+      <div class="fields">
+        <div class="field full"><label for="f-date">التاريخ والوقت</label><input id="f-date" type="datetime-local" data-f="date"></div>
+        <div class="field"><label for="f-fast"><i class="dot" style="background:var(--fast)"></i>سريع (دقيقة)</label><input id="f-fast" inputmode="decimal" data-f="fast"></div>
+        <div class="field"><label for="f-slow"><i class="dot" style="background:var(--slow)"></i>هادئ (دقيقة)</label><input id="f-slow" inputmode="decimal" data-f="slow"></div>
+        <div class="field"><label for="f-warm"><i class="dot" style="background:var(--warm)"></i>تسخين (دقيقة)</label><input id="f-warm" inputmode="decimal" data-f="warm"></div>
+        <div class="field"><label for="f-cool"><i class="dot" style="background:var(--cool)"></i>تهدئة (دقيقة)</label><input id="f-cool" inputmode="decimal" data-f="cool"></div>
+        <div class="field"><label for="f-rounds">الجولات المكتملة</label><input id="f-rounds" inputmode="numeric" data-f="rounds"></div>
+        <div class="field"><label for="f-distance">المسافة (كم)</label><input id="f-distance" inputmode="decimal" data-f="distance" placeholder="اختياري"></div>
+        <div class="field"><label for="f-steps">الخطوات</label><input id="f-steps" inputmode="numeric" data-f="steps" placeholder="اختياري"></div>
+        <div class="field"><label for="f-hr">متوسط النبض</label><input id="f-hr" inputmode="numeric" data-f="hr" placeholder="اختياري"></div>
+        <div class="field full">
+          <label>الإحساس بالجهد في الفترات السريعة</label>
+          <div class="effort" id="effort"></div>
+          <div class="effort-scale"><span>سهل جدًا</span><span>متعب قليلًا (الهدف ~6–7)</span><span>أقصى جهد</span></div>
+        </div>
+        <div class="field full"><label for="f-notes">ملاحظات</label><textarea id="f-notes" data-f="notes" placeholder="مثلًا: ألم خفيف في الركبة، طقس حار، مشيت على منحدر…"></textarea></div>
+      </div>
+    </div>
+
+    <div class="rec-bottom">
+      <button class="link-btn danger" id="deleteBtn">حذف الجلسة</button>
+      <button class="secondary" id="backBtn" style="padding:0 28px">رجوع</button>
+    </div>
   </section>
 </main>
+
+<!-- Session (fullscreen, black) -->
+<section id="session" hidden>
+  <div class="s-head">
+    <span class="s-phase" id="phaseName"></span>
+    <span><span class="s-round num" id="roundText"></span><span class="s-paused">متوقف مؤقتًا</span></span>
+  </div>
+  <div class="s-time num" id="timeText">0:00</div>
+  <div class="s-pbar"><i id="phaseBar"></i></div>
+
+  <div class="s-ui" id="sessionUI">
+    <div class="s-ui-inner">
+      <div class="s-next" id="nextText"></div>
+      <div class="timeline" id="liveBar"></div>
+      <div class="totals">
+        <span>مضى <b class="num" id="elapsedText">0:00</b></span>
+        <span>متبقٍّ <b class="num" id="remainText">0:00</b></span>
+      </div>
+      <div class="controls">
+        <button class="ctrl" id="stopBtn">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+          إنهاء
+        </button>
+        <button class="ctrl main" id="pauseBtn"></button>
+        <button class="ctrl" id="skipBtn">
+          التالي
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 6.5v11l8.5-5.5L6 6.5z"/><rect x="17" y="6" width="2" height="12" rx="1"/></svg>
+        </button>
+      </div>
+      <div class="s-tip">تختفي الأزرار تلقائيًا لتوفير البطارية · المس الشاشة لإظهارها</div>
+    </div>
+  </div>
+</section>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 (() => {
   const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   const PHASES = {
-    warm: { name: 'تسخين', hint: 'مشي خفيف، حرّك كتفيك وكاحليك', color: '--warm' },
-    fast: { name: 'مشي سريع', hint: 'خطوة واسعة وذراعان نشيطتان. تتكلم بجمل قصيرة', color: '--fast' },
-    slow: { name: 'مشي هادئ', hint: 'استرجع أنفاسك، لا تتوقف', color: '--slow' },
-    cool: { name: 'تهدئة', hint: 'أبطئ تدريجيًا وتنفّس بعمق', color: '--cool' },
+    warm: { name: 'تسخين', say: 'تسخين', color: '--warm' },
+    fast: { name: 'مشي سريع', say: 'مشي سريع', color: '--fast' },
+    slow: { name: 'مشي هادئ', say: 'مشي هادئ', color: '--slow' },
+    cool: { name: 'تهدئة', say: 'تهدئة', color: '--cool' },
   };
   const ORDER = ['warm', 'fast', 'slow', 'cool'];
+  const KEYS = ['fast', 'slow', 'rounds', 'warm', 'cool'];
 
   // ---------- storage (best effort) ----------
   const store = {
     get(k, fallback) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : fallback; } catch { return fallback; } },
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+    del(k) { try { localStorage.removeItem(k); } catch {} },
   };
 
-  const DEFAULTS = { fast: 3, slow: 3, rounds: 5, warm: 3, cool: 0 };
-  const settings = Object.assign({}, DEFAULTS, store.get('jw-settings', {}));
-  let muted = store.get('jw-muted', false);
+  // ---------- presets ----------
+  const SEED = [
+    { id: 'std', name: 'قياسي', fast: 3, slow: 3, rounds: 5, warm: 3, cool: 0 },
+    { id: 'beg', name: 'مبتدئ', fast: 3, slow: 3, rounds: 3, warm: 3, cool: 0 },
+  ];
+  let presets = store.get('jw-presets', null) || SEED;
+  let defaultId = store.get('jw-default', 'std');
+  let editPresets = false;
+  const pick = (o) => Object.fromEntries(KEYS.map((k) => [k, o[k]]));
+  const sameCfg = (a, b) => KEYS.every((k) => a[k] === b[k]);
+  const defaultPreset = () => presets.find((p) => p.id === defaultId) || presets[0];
+  const savePresets = () => { store.set('jw-presets', presets); store.set('jw-default', defaultId); };
+
+  const settings = pick(defaultPreset() || SEED[0]);
+
+  const canSpeak = 'speechSynthesis' in window;
+  let soundMode = store.get('jw-sound', canSpeak ? 'voice' : 'tones');
+  if (soundMode === 'voice' && !canSpeak) soundMode = 'tones';
+
+  // ---------- sessions history ----------
+  let sessions = store.get('jw-sessions', []);
+  const saveSessions = () => { sessions.sort((a, b) => b.date - a.date); store.set('jw-sessions', sessions.slice(0, 500)); };
+  const recTotal = (r) => (r.warm || 0) + (r.fast || 0) + (r.slow || 0) + (r.cool || 0);
+  const r1 = (x) => Math.round(x * 10) / 10;
+
+  // ---------- formatting ----------
+  const fmt = (s) => {
+    s = Math.max(0, Math.ceil(s - 1e-6));
+    const m = Math.floor(s / 60);
+    return m + ':' + String(s % 60).padStart(2, '0');
+  };
+  let DF, TF, DS;
+  try {
+    DF = new Intl.DateTimeFormat('ar-u-ca-gregory-nu-latn', { weekday: 'long', day: 'numeric', month: 'long' });
+    DS = new Intl.DateTimeFormat('ar-u-ca-gregory-nu-latn', { day: 'numeric', month: 'long' });
+    TF = new Intl.DateTimeFormat('ar-u-ca-gregory-nu-latn', { hour: 'numeric', minute: '2-digit' });
+  } catch {
+    DF = DS = TF = { format: (d) => new Date(d).toLocaleString() };
+  }
+  const fmtDate = (ts) => DF.format(ts) + '، ' + TF.format(ts);
+  const pad = (n) => String(n).padStart(2, '0');
+  const toLocalInput = (ts) => { const d = new Date(ts); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+  const parseNum = (s) => {
+    s = String(s).trim().replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[٫,]/g, '.');
+    if (s === '') return null;
+    const n = Number(s);
+    return Number.isFinite(n) && n >= 0 ? n : null;
+  };
 
   // ---------- plan ----------
-  function buildPlan() {
+  // cfg.extra = rounds appended after the cool-down when the user continues a finished session
+  function buildPlan(cfg) {
     const plan = [];
-    if (settings.warm) plan.push({ type: 'warm', dur: settings.warm * 60 });
-    for (let r = 1; r <= settings.rounds; r++) {
-      plan.push({ type: 'fast', dur: settings.fast * 60, round: r });
-      plan.push({ type: 'slow', dur: settings.slow * 60, round: r });
+    if (cfg.warm) plan.push({ type: 'warm', dur: cfg.warm * 60 });
+    for (let r = 1; r <= cfg.rounds; r++) {
+      plan.push({ type: 'fast', dur: cfg.fast * 60, round: r });
+      plan.push({ type: 'slow', dur: cfg.slow * 60, round: r });
     }
-    if (settings.cool) plan.push({ type: 'cool', dur: settings.cool * 60 });
+    if (cfg.cool) plan.push({ type: 'cool', dur: cfg.cool * 60 });
+    for (let r = 1; r <= (cfg.extra || 0); r++) {
+      plan.push({ type: 'fast', dur: cfg.fast * 60, round: cfg.rounds + r });
+      plan.push({ type: 'slow', dur: cfg.slow * 60, round: cfg.rounds + r });
+    }
     let t = 0;
     for (const p of plan) { p.start = t; t += p.dur; }
     return { plan, total: t };
   }
 
   function renderBar(el, plan) {
-    el.innerHTML = '';
-    for (const p of plan) {
-      const i = document.createElement('i');
-      i.style.flex = p.dur + ' 1 0';
-      i.style.background = `var(${PHASES[p.type].color})`;
-      el.appendChild(i);
-    }
+    el.innerHTML = plan.map((p) => `<i style="flex:${p.dur} 1 0;background:var(${PHASES[p.type].color})"></i>`).join('');
   }
 
-  const fmt = (s) => {
-    s = Math.max(0, Math.round(s));
-    const m = Math.floor(s / 60);
-    return m + ':' + String(s % 60).padStart(2, '0');
+  const planText = (c) => {
+    let s = `${c.rounds + (c.extra || 0)} × (${c.fast} د سريع + ${c.slow} د هادئ)`;
+    if (c.warm) s += `، تسخين ${c.warm} د`;
+    if (c.cool) s += `، تهدئة ${c.cool} د`;
+    return s;
   };
 
+  // ---------- toast ----------
+  let toastTimer;
+  function toast(msg) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
   // ---------- setup UI ----------
+  function renderPresets() {
+    const active = presets.find((p) => sameCfg(p, settings));
+    let html = presets.map((p) => `
+      <div class="preset ${active === p ? 'active' : ''}" data-id="${esc(p.id)}">
+        <button type="button" data-act="apply">${p.id === defaultId ? '★ ' : ''}${esc(p.name)}</button>
+        ${editPresets ? `<button type="button" data-act="star" aria-label="اجعله الافتراضي" class="p-star">${p.id === defaultId ? '★' : '☆'}</button><button type="button" data-act="del" class="p-del" aria-label="حذف">×</button>` : ''}
+      </div>`).join('');
+    if (!editPresets && !active) html += '<button type="button" class="preset add" data-act="save"><span style="padding:0 10px">+ حفظ كقالب</span></button>';
+    if (presets.length) html += `<button type="button" class="preset ghost" data-act="edit"><span style="padding:0 6px">${editPresets ? 'تم' : 'تعديل'}</span></button>`;
+    else html += '<button type="button" class="preset add" data-act="save"><span style="padding:0 10px">+ حفظ كقالب</span></button>';
+    $('presets').innerHTML = html;
+  }
+
+  $('presets').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-act]'); if (!b) return;
+    const act = b.dataset.act;
+    const id = b.closest('.preset')?.dataset.id;
+    const p = presets.find((x) => x.id === id);
+    if (act === 'apply' && p) { Object.assign(settings, pick(p)); }
+    else if (act === 'star' && p) { defaultId = p.id; savePresets(); toast(`«${p.name}» هو الافتراضي الآن`); }
+    else if (act === 'del' && p) {
+      if (!confirm(`حذف قالب «${p.name}»؟`)) return;
+      presets = presets.filter((x) => x !== p);
+      if (defaultId === p.id) defaultId = presets[0]?.id || '';
+      if (!presets.length) editPresets = false;
+      savePresets();
+    }
+    else if (act === 'edit') { editPresets = !editPresets; }
+    else if (act === 'save') {
+      const name = (prompt('اسم القالب:', `${settings.rounds}×${settings.fast}/${settings.slow}`) || '').trim();
+      if (!name) return;
+      const existing = presets.find((x) => x.name === name);
+      if (existing) Object.assign(existing, pick(settings));
+      else presets.push({ id: 'p' + Date.now(), name, ...pick(settings) });
+      if (!defaultId || !presets.some((x) => x.id === defaultId)) defaultId = (existing || presets[presets.length - 1]).id;
+      savePresets();
+      toast('حُفظ القالب');
+    }
+    renderSetup();
+  });
+
   function renderSetup() {
     document.querySelectorAll('.stepper').forEach((st) => {
       const k = st.dataset.key, v = settings[k];
-      st.querySelector('output').innerHTML = v + (k === 'rounds' ? '' : '<span>د</span>');
+      const out = st.querySelector('output');
+      const off = v === 0 && +st.dataset.min === 0;
+      out.classList.toggle('off', off);
+      out.innerHTML = off ? 'بدون' : v + (k === 'rounds' ? '' : '<span>د</span>');
       st.querySelector('[data-d="-1"]').disabled = v <= +st.dataset.min;
       st.querySelector('[data-d="1"]').disabled = v >= +st.dataset.max;
     });
-    document.querySelectorAll('.chips').forEach((ch) => {
-      ch.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.v === settings[ch.dataset.key])));
+    $('soundChips').querySelectorAll('button').forEach((b) => {
+      b.hidden = b.dataset.v === 'voice' && !canSpeak;
+      b.setAttribute('aria-pressed', String(b.dataset.v === soundMode));
     });
-    const { plan, total } = buildPlan();
+    const { plan, total } = buildPlan(settings);
     $('totalMin').textContent = Math.round(total / 60);
     $('summaryText').textContent = `${settings.rounds} × (${settings.fast} سريع + ${settings.slow} هادئ)`;
     renderBar($('previewBar'), plan);
@@ -519,30 +793,49 @@
       .filter((t) => plan.some((p) => p.type === t))
       .map((t) => `<span><i class="dot" style="background:var(${PHASES[t].color})"></i>${PHASES[t].name}</span>`)
       .join('');
+    renderPresets();
     renderWeek();
-    store.set('jw-settings', settings);
+    renderHistory();
   }
 
+  // Steppers: tap for one step, hold to repeat
   document.querySelectorAll('.stepper').forEach((st) => {
-    st.addEventListener('click', (e) => {
-      const b = e.target.closest('button'); if (!b) return;
-      const k = st.dataset.key;
-      settings[k] = Math.min(+st.dataset.max, Math.max(+st.dataset.min, settings[k] + +b.dataset.d));
+    const k = st.dataset.key;
+    let holdT, repT;
+    const step = (d) => {
+      const v = Math.min(+st.dataset.max, Math.max(+st.dataset.min, settings[k] + d));
+      if (v === settings[k]) return stop();
+      settings[k] = v;
       renderSetup();
-    });
-  });
-  document.querySelectorAll('.chips').forEach((ch) => {
-    ch.addEventListener('click', (e) => {
-      const b = e.target.closest('button'); if (!b) return;
-      settings[ch.dataset.key] = +b.dataset.v;
-      renderSetup();
+    };
+    const stop = () => { clearTimeout(holdT); clearInterval(repT); };
+    st.querySelectorAll('button').forEach((b) => {
+      const d = +b.dataset.d;
+      b.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        step(d);
+        holdT = setTimeout(() => { repT = setInterval(() => step(d), 110); }, 420);
+      });
+      ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => b.addEventListener(ev, stop));
+      b.addEventListener('click', (e) => { if (e.detail === 0) step(d); }); // keyboard
+      b.addEventListener('contextmenu', (e) => e.preventDefault());
     });
   });
 
-  // ---------- week history ----------
-  const dayKey = (d) => d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+  $('soundChips').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    soundMode = b.dataset.v;
+    store.set('jw-sound', soundMode);
+    renderSetup();
+    initAudio();
+    if (soundMode === 'voice') speak('مشي سريع');
+    else if (soundMode === 'tones') cue('fast');
+  });
+
+  // ---------- week + history ----------
+  const dayKey = (d) => { d = new Date(d); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); };
   function lastWeek() {
-    const days = new Set(store.get('jw-days', []));
+    const days = new Set(sessions.filter((s) => recTotal(s) >= 10).map((s) => dayKey(s.date)));
     const out = [];
     for (let i = 6; i >= 0; i--) {
       const d = new Date(); d.setDate(d.getDate() - i);
@@ -551,17 +844,37 @@
     return out;
   }
   function renderWeek() {
-    // index 0 = 6 days ago; in RTL the first dot sits on the right, so today ends on the left
+    // first dot = 6 days ago (right side in RTL), last dot = today
     $('weekDots').innerHTML = lastWeek().map((on) => `<i class="${on ? 'on' : ''}"></i>`).join('');
   }
-  function markToday() {
-    const days = store.get('jw-days', []);
-    const k = dayKey(new Date());
-    if (!days.includes(k)) days.push(k);
-    store.set('jw-days', days.slice(-60));
-  }
 
-  // ---------- sound & haptics ----------
+  let historyAll = false;
+  function renderHistory() {
+    const list = historyAll ? sessions : sessions.slice(0, 6);
+    let html = list.map((s) => `
+      <button class="h-row" data-id="${s.id}">
+        <div><b>${esc(DF.format(s.date))}</b><small>${esc(TF.format(s.date))}${s.effort ? ` · جهد ${s.effort}/10` : ''}${s.distance ? ` · ${s.distance} كم` : ''}</small></div>
+        <div class="h-num"><b><span class="num">${Math.round(recTotal(s))}</span> د</b><small>سريع ${r1(s.fast || 0)}</small></div>
+      </button>`).join('');
+    if (!sessions.length) html = '<p class="empty">لا توجد جلسات بعد. ستظهر هنا بعد أول مشي.</p>';
+    if (sessions.length > 6) html += `<button class="link-btn" id="moreHistory" style="width:100%;padding:12px 0;border-top:1px solid var(--line)">${historyAll ? 'عرض أقل' : `عرض الكل (${sessions.length})`}</button>`;
+    $('historyList').innerHTML = html;
+    $('copyHistoryBtn').hidden = !sessions.length;
+  }
+  $('historyList').addEventListener('click', (e) => {
+    if (e.target.closest('#moreHistory')) { historyAll = !historyAll; renderHistory(); return; }
+    const row = e.target.closest('.h-row'); if (!row) return;
+    const rec = sessions.find((s) => String(s.id) === row.dataset.id);
+    if (rec) openRecord(rec, false);
+  });
+  $('addManualBtn').addEventListener('click', () => {
+    const rec = { id: Date.now(), date: Date.now(), cfg: null, warm: 0, fast: 0, slow: 0, cool: 0, rounds: 0, roundsPlanned: 0, completed: false, manual: true, effort: null, distance: null, steps: null, hr: null, notes: '' };
+    sessions.push(rec); saveSessions();
+    openRecord(rec, false);
+  });
+  $('copyHistoryBtn').addEventListener('click', () => copyText(historyReport()));
+
+  // ---------- sound, voice & haptics ----------
   let ac = null;
   function initAudio() {
     try {
@@ -570,7 +883,7 @@
     } catch { ac = null; }
   }
   function tone(freq, dur, when = 0, vol = 0.3) {
-    if (muted || !ac) return;
+    if (soundMode === 'off' || !ac) return;
     const t = ac.currentTime + when;
     const o = ac.createOscillator(), g = ac.createGain();
     o.type = 'sine';
@@ -582,76 +895,108 @@
     o.start(t);
     o.stop(t + dur + 0.05);
   }
-  const vibrate = (p) => { if (!muted && navigator.vibrate) try { navigator.vibrate(p); } catch {} };
-  function cue(type) {
+  let arVoice;
+  const findVoice = () => { try { arVoice = speechSynthesis.getVoices().find((v) => /^ar/i.test(v.lang)); } catch {} };
+  if (canSpeak) { findVoice(); try { speechSynthesis.addEventListener('voiceschanged', findVoice); } catch {} }
+  function speak(text) {
+    if (soundMode !== 'voice' || !canSpeak) return;
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'ar-SA';
+      if (arVoice) u.voice = arVoice;
+      speechSynthesis.speak(u);
+    } catch {}
+  }
+  const vibrate = (p) => { if (soundMode !== 'off' && navigator.vibrate) try { navigator.vibrate(p); } catch {} };
+  function cue(type, p) {
     if (type === 'fast') { tone(660, .18); tone(880, .35, .2); vibrate([200, 80, 200]); }
     else if (type === 'slow') { tone(660, .18); tone(440, .4, .2); vibrate([400]); }
     else if (type === 'done') { [523, 659, 784, 1047].forEach((f, i) => tone(f, .3, i * .15)); vibrate([150, 60, 150, 60, 300]); }
     else { tone(587, .35); vibrate([250]); }
+    let text = type === 'done' ? 'انتهى التمرين. أحسنت' : PHASES[type].say;
+    if (type === 'fast' && p && p.round) text = `الجولة ${p.round}. ${text}`;
+    setTimeout(() => speak(text), 650);
   }
   const countTick = () => { tone(440, .08, 0, .2); vibrate(40); };
-
-  const ICON_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
-  const ICON_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M22 9l-6 6M16 9l6 6"/></svg>';
-  function renderSound() {
-    $('soundBtn').innerHTML = muted ? ICON_OFF : ICON_ON;
-    $('soundBtn').setAttribute('aria-label', muted ? 'تشغيل الصوت' : 'كتم الصوت');
-  }
-  $('soundBtn').addEventListener('click', () => {
-    muted = !muted; store.set('jw-muted', muted); renderSound();
-    if (!muted) { initAudio(); tone(660, .12); }
-  });
 
   // ---------- wake lock ----------
   let wakeLock = null;
   async function lockScreen() {
-    try { if ('wakeLock' in navigator && !wakeLock) { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); } } catch {}
+    try {
+      if ('wakeLock' in navigator && !wakeLock) {
+        wakeLock = await navigator.wakeLock.request('screen');
+        wakeLock.addEventListener('release', () => { wakeLock = null; });
+      }
+    } catch {}
   }
   function unlockScreen() { try { wakeLock && wakeLock.release(); } catch {} wakeLock = null; }
 
+  // ---------- views ----------
+  const themeMetas = [...document.querySelectorAll('meta[name="theme-color"]')];
+  const themeOrig = themeMetas.map((m) => m.content);
+  function show(id) {
+    $('setup').hidden = id !== 'setup';
+    $('record').hidden = id !== 'record';
+    $('session').hidden = id !== 'session';
+    themeMetas.forEach((m, i) => { m.content = id === 'session' ? '#000000' : themeOrig[i]; });
+    window.scrollTo(0, 0);
+  }
+
   // ---------- session engine ----------
-  const R = 108, C = 2 * Math.PI * R;
-  $('ring').style.strokeDasharray = C;
-
-  let S = null; // { plan, total, running, startAt, before, idx, lastSec, timer }
-
+  // S: { cfg, plan, total, running, startAt, before, skipped, startedAt, recId, idx, lastSec }
+  let S = null;
+  let last = null; // the just-finished session, so it can be continued
+  let tickT = null;
   const elapsed = () => S.before + (S.running ? (Date.now() - S.startAt) / 1000 : 0);
 
-  function show(id) {
-    ['setup', 'session', 'done'].forEach((s) => { $(s).hidden = s !== id; });
-    window.scrollTo(0, 0);
+  function persistActive() {
+    if (!S) return store.del('jw-active');
+    store.set('jw-active', { cfg: S.cfg, running: S.running, startAt: S.startAt, before: S.before, skipped: S.skipped, startedAt: S.startedAt, recId: S.recId });
+  }
+
+  function begin(state, announce) {
+    const { plan, total } = buildPlan(state.cfg);
+    S = Object.assign({ plan, total, idx: -1, lastSec: null }, state);
+    renderBar($('liveBar'), plan);
+    show('session');
+    if (S.running) lockScreen();
+    persistActive();
+    renderPause();
+    S.silent = !announce;
+    tick();
+    if (!S) return; // already over (e.g. resumed after the planned end)
+    S.silent = false;
+    showUI(4000);
   }
 
   function start() {
     initAudio();
-    const { plan, total } = buildPlan();
-    S = { plan, total, running: true, startAt: Date.now(), before: 0, idx: -1, lastSec: null, timer: null };
-    renderBar($('liveBar'), plan);
-    show('session');
-    lockScreen();
-    S.timer = setInterval(tick, 200);
-    tick();
+    if (canSpeak && soundMode === 'voice') speak(' '); // unlock speech on iOS inside the tap
+    begin({ cfg: pick(settings), running: true, startAt: Date.now(), before: 0, skipped: { warm: 0, fast: 0, slow: 0, cool: 0 }, startedAt: Date.now(), recId: null }, true);
   }
 
   function setPhaseUI(i) {
     const p = S.plan[i], meta = PHASES[p.type];
-    document.documentElement.style.setProperty('--phase', `var(${meta.color})`);
+    $('session').style.setProperty('--phase', `var(${meta.color})`);
     $('phaseName').textContent = meta.name;
-    $('hintText').textContent = meta.hint;
-    const rounds = settings.rounds;
-    $('roundText').textContent = p.round ? `الجولة ${p.round} من ${rounds}` : (p.type === 'warm' ? 'قبل الجولات' : 'بعد الجولات');
+    const roundsAll = S.cfg.rounds + (S.cfg.extra || 0);
+    $('roundText').textContent = p.round ? `${p.round}/${roundsAll}` : '';
     const n = S.plan[i + 1];
-    if (n) {
-      $('nextText').innerHTML = `التالي: <b style="color:var(${PHASES[n.type].color})">${PHASES[n.type].name}</b> · ${n.dur / 60} د`;
-    } else {
-      $('nextText').textContent = 'المرحلة الأخيرة 💪';
-    }
-    [...$('liveBar').children].forEach((el, k) => {
-      el.className = k < i ? 'past' : k === i ? 'now' : '';
-    });
+    $('nextText').innerHTML = n
+      ? `التالي: <b style="color:var(${PHASES[n.type].color})">${PHASES[n.type].name}</b> · ${n.dur / 60} د`
+      : 'المرحلة الأخيرة 💪';
+    [...$('liveBar').children].forEach((el, k) => { el.className = k < i ? 'past' : k === i ? 'now' : ''; });
   }
 
+  function updateTotals(e) {
+    $('elapsedText').textContent = fmt(e);
+    $('remainText').textContent = fmt(S.total - e);
+  }
+
+  // Updates the screen once per second, aligned to the second boundary (cheaper than a fast loop)
   function tick() {
+    clearTimeout(tickT);
     if (!S) return;
     const e = elapsed();
     if (e >= S.total) return finish(true);
@@ -661,22 +1006,48 @@
       S.idx = i;
       S.lastSec = null;
       setPhaseUI(i);
-      if (S.running) cue(S.plan[i].type);
+      if (S.running && !S.silent) cue(S.plan[i].type, S.plan[i]);
     }
     const p = S.plan[i];
     const left = p.start + p.dur - e;
-    const sec = Math.ceil(left);
-    if (S.running && sec !== S.lastSec && sec >= 1 && sec <= 3 && S.lastSec !== null) countTick();
-    S.lastSec = sec;
-    $('timeText').textContent = fmt(sec);
-    $('ring').style.strokeDashoffset = C * (1 - (e - p.start) / p.dur);
-    $('elapsedText').textContent = fmt(e);
-    $('remainText').textContent = fmt(S.total - e);
+    const sec = Math.ceil(left - 1e-6);
+    if (sec !== S.lastSec) {
+      if (S.running && S.lastSec !== null && sec >= 1 && sec <= 3) countTick();
+      S.lastSec = sec;
+      const txt = fmt(left);
+      const t = $('timeText');
+      t.textContent = txt;
+      t.classList.toggle('short', txt.length <= 4);
+      $('phaseBar').style.width = ((e - p.start) / p.dur * 100).toFixed(2) + '%';
+      if (uiShown) updateTotals(e);
+    }
+    if (S.running) {
+      const ms = left * 1000;
+      tickT = setTimeout(tick, Math.max(40, (ms % 1000) + 25));
+    }
   }
 
+  // Controls auto-hide to keep the screen almost entirely black
+  let uiShown = false, uiT;
+  function showUI(ms = 5000) {
+    uiShown = true;
+    $('sessionUI').classList.add('show');
+    if (S) updateTotals(elapsed());
+    clearTimeout(uiT);
+    if (S && S.running) uiT = setTimeout(hideUI, ms);
+  }
+  function hideUI() {
+    if (S && !S.running) return;
+    uiShown = false;
+    $('sessionUI').classList.remove('show');
+  }
+  $('session').addEventListener('click', (e) => {
+    if (e.target.closest('button')) { showUI(); return; }
+    uiShown ? hideUI() : showUI();
+  });
+
   function renderPause() {
-    const btn = $('pauseBtn');
-    btn.innerHTML = S.running
+    $('pauseBtn').innerHTML = S.running
       ? '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.5"/><rect x="14" y="5" width="4" height="14" rx="1.5"/></svg>إيقاف مؤقت'
       : '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 6.5v11a1 1 0 0 0 1.5.86l9.5-5.5a1 1 0 0 0 0-1.72l-9.5-5.5A1 1 0 0 0 7 6.5z"/></svg>استئناف';
     $('session').classList.toggle('paused', !S.running);
@@ -686,16 +1057,21 @@
     if (!S) return;
     if (S.running) { S.before = elapsed(); S.running = false; unlockScreen(); }
     else { initAudio(); S.startAt = Date.now(); S.running = true; lockScreen(); }
+    persistActive();
     renderPause();
+    S.lastSec = null;
     tick();
+    showUI();
   });
 
   $('skipBtn').addEventListener('click', () => {
     if (!S) return;
-    const n = S.plan[S.idx + 1];
-    if (!n) return finish(true);
+    const e = elapsed(), p = S.plan[S.idx], n = S.plan[S.idx + 1];
+    S.skipped[p.type] += p.start + p.dur - e;
+    if (!n) { S.before = S.total; S.startAt = Date.now(); return finish(true); }
     S.before = n.start;
     S.startAt = Date.now();
+    persistActive();
     tick();
   });
 
@@ -705,37 +1081,219 @@
   });
 
   function finish(completed) {
+    clearTimeout(tickT);
+    clearTimeout(uiT);
     const e = Math.min(elapsed(), S.total);
-    clearInterval(S.timer);
     unlockScreen();
-    // fast minutes actually walked
-    let fast = 0;
-    for (const p of S.plan) if (p.type === 'fast') fast += Math.max(0, Math.min(p.dur, e - p.start));
-    const counts = completed || e >= S.total * 0.6;
-    if (counts) markToday();
+    store.del('jw-active');
+
+    // time actually walked per phase type (timeline covered minus skipped parts)
+    const walked = { warm: 0, fast: 0, slow: 0, cool: 0 };
+    let roundsDone = 0;
+    for (const p of S.plan) {
+      walked[p.type] += Math.max(0, Math.min(p.dur, e - p.start));
+      if (p.type === 'slow' && e >= p.start + p.dur) roundsDone++;
+    }
+    for (const k in walked) walked[k] = Math.max(0, walked[k] - (S.skipped[k] || 0));
+    const walkedTotal = walked.warm + walked.fast + walked.slow + walked.cool;
+
+    if (!S.recId && walkedTotal < 60) {
+      S = null;
+      renderSetup();
+      show('setup');
+      toast('لم تُحفظ الجلسة (أقل من دقيقة)');
+      return;
+    }
+
+    let rec = S.recId && sessions.find((s) => s.id === S.recId);
+    if (!rec) {
+      rec = { id: S.startedAt, date: S.startedAt, effort: null, distance: null, steps: null, hr: null, notes: '' };
+      sessions.push(rec);
+    }
+    Object.assign(rec, {
+      cfg: S.cfg,
+      warm: r1(walked.warm / 60), fast: r1(walked.fast / 60), slow: r1(walked.slow / 60), cool: r1(walked.cool / 60),
+      rounds: roundsDone,
+      roundsPlanned: S.cfg.rounds + (S.cfg.extra || 0),
+      completed,
+    });
+    saveSessions();
+
+    last = { cfg: S.cfg, before: e, skipped: S.skipped, startedAt: S.startedAt, recId: rec.id, completed };
     if (completed) cue('done');
-    $('doneText').textContent = completed
-      ? 'أنهيت الجلسة كاملة. استمر على ٤ أيام في الأسبوع.'
-      : (counts ? 'جلسة جيدة، احتُسبت لليوم.' : 'كل خطوة تُحسب. حاول إكمال الجلسة في المرة القادمة.');
-    $('statTotal').textContent = Math.round(e / 60);
-    $('statFast').textContent = Math.round(fast / 60);
-    $('statWeek').textContent = lastWeek().filter(Boolean).length;
     S = null;
-    show('done');
+    openRecord(rec, true);
   }
 
-  $('againBtn').addEventListener('click', () => { renderSetup(); show('setup'); });
-  $('startBtn').addEventListener('click', () => { start(); renderPause(); });
+  $('continueBtn').addEventListener('click', () => {
+    if (!last) return;
+    initAudio();
+    const cfg = { ...last.cfg };
+    if (last.completed) cfg.extra = (cfg.extra || 0) + 1;
+    const state = { cfg, running: true, startAt: Date.now(), before: last.before, skipped: last.skipped, startedAt: last.startedAt, recId: last.recId };
+    last = null;
+    begin(state, true);
+  });
+
+  // ---------- record view ----------
+  let rec = null;
+  function openRecord(r, fresh) {
+    rec = r;
+    const canContinue = fresh && last && last.recId === r.id;
+    $('doneMark').hidden = !fresh;
+    $('recTitle').textContent = fresh ? (r.completed ? 'أحسنت!' : 'جلسة جيدة') : (r.manual ? 'جلسة يدوية' : 'تفاصيل الجلسة');
+    $('recSub').textContent = fresh
+      ? (r.completed ? 'أنهيت الخطة كاملة. سجّل إحساسك بالجهد ثم انسخ البيانات للتقييم.' : 'أوقفت الجلسة مبكرًا، يمكنك متابعتها.')
+      : (r.cfg ? planText(r.cfg) : 'أدخل البيانات يدويًا');
+    $('continueBtn').hidden = !canContinue;
+    if (canContinue) $('continueBtn').textContent = last.completed ? '+ جولة إضافية' : 'متابعة الجلسة';
+    $('shareBtn').hidden = !navigator.share;
+    $('recActions').classList.toggle('single', !navigator.share);
+
+    document.querySelectorAll('#record [data-f]').forEach((el) => {
+      const f = el.dataset.f;
+      if (f === 'date') el.value = toLocalInput(r.date);
+      else el.value = r[f] == null ? '' : r[f];
+    });
+    renderEffort();
+    renderRecStats();
+    show('record');
+  }
+
+  function renderRecStats() {
+    $('statTotal').textContent = r1(recTotal(rec));
+    $('statFast').textContent = r1(rec.fast || 0);
+    $('statRounds').textContent = rec.roundsPlanned ? `${rec.rounds || 0}/${rec.roundsPlanned}` : (rec.rounds || 0);
+  }
+
+  function renderEffort() {
+    $('effort').innerHTML = Array.from({ length: 10 }, (_, i) => `<button type="button" class="num" data-v="${i + 1}" aria-pressed="${rec.effort === i + 1}">${i + 1}</button>`).join('');
+  }
+  $('effort').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b || !rec) return;
+    const v = +b.dataset.v;
+    rec.effort = rec.effort === v ? null : v;
+    saveSessions();
+    renderEffort();
+  });
+
+  document.querySelectorAll('#record [data-f]').forEach((el) => {
+    el.addEventListener('input', () => {
+      if (!rec) return;
+      const f = el.dataset.f;
+      if (f === 'notes') rec.notes = el.value;
+      else if (f === 'date') { const t = new Date(el.value).getTime(); if (Number.isFinite(t)) rec.date = t; }
+      else rec[f] = parseNum(el.value);
+      saveSessions();
+      renderRecStats();
+    });
+  });
+
+  $('backBtn').addEventListener('click', () => {
+    if (rec && rec.manual && recTotal(rec) === 0 && !rec.notes) { sessions = sessions.filter((s) => s !== rec); saveSessions(); }
+    rec = null; last = null;
+    renderSetup();
+    show('setup');
+  });
+  $('deleteBtn').addEventListener('click', () => {
+    if (!rec || !confirm('حذف هذه الجلسة نهائيًا؟')) return;
+    sessions = sessions.filter((s) => s !== rec);
+    saveSessions();
+    rec = null; last = null;
+    renderSetup();
+    show('setup');
+    toast('حُذفت الجلسة');
+  });
+
+  // ---------- reports for Claude ----------
+  function recLines(r) {
+    const L = [];
+    L.push(`التاريخ: ${fmtDate(r.date)}`);
+    if (r.cfg) L.push(`الخطة: ${planText(r.cfg)}`);
+    L.push(`المدة الفعلية: ${r1(recTotal(r))} دقيقة (سريع ${r1(r.fast || 0)}، هادئ ${r1(r.slow || 0)}${r.warm ? `، تسخين ${r1(r.warm)}` : ''}${r.cool ? `، تهدئة ${r1(r.cool)}` : ''})`);
+    if (r.roundsPlanned) L.push(`الجولات المكتملة: ${r.rounds || 0} من ${r.roundsPlanned}${r.completed ? ' (أكملت الخطة)' : ' (أوقفتها مبكرًا)'}`);
+    else if (r.rounds) L.push(`الجولات: ${r.rounds}`);
+    if (r.effort) L.push(`الإحساس بالجهد في الفترات السريعة: ${r.effort}/10`);
+    if (r.distance) L.push(`المسافة: ${r.distance} كم`);
+    if (r.steps) L.push(`الخطوات: ${r.steps}`);
+    if (r.hr) L.push(`متوسط النبض: ${r.hr}`);
+    if (r.notes && r.notes.trim()) L.push(`ملاحظات: ${r.notes.trim()}`);
+    return L;
+  }
+  function periodSummary(days, exceptId) {
+    const from = Date.now() - days * 864e5;
+    const list = sessions.filter((s) => s.date >= from && s.id !== exceptId);
+    const activeDays = new Set(list.map((s) => dayKey(s.date))).size;
+    const fast = list.reduce((a, s) => a + (s.fast || 0), 0);
+    const total = list.reduce((a, s) => a + recTotal(s), 0);
+    return { list, activeDays, fast: r1(fast), total: r1(total) };
+  }
+  const shortLine = (s) => `- ${DS.format(s.date)}: ${r1(recTotal(s))} د (سريع ${r1(s.fast || 0)})${s.roundsPlanned ? `، ${s.rounds}/${s.roundsPlanned} جولات` : ''}${s.effort ? `، جهد ${s.effort}/10` : ''}${s.notes && s.notes.trim() ? `، «${s.notes.trim()}»` : ''}`;
+  const ASK = 'قيّم هذا التمرين بناءً على مبادئ المشي الياباني (Interval Walking Training: فترات سريعة بجهد ~70% وهادئة ~40%، 4 أيام أسبوعيًا على الأقل)، وأعطني ملاحظات واقتراحات عملية للجلسات القادمة.';
+
+  function recordReport(r) {
+    const L = ['تمرين المشي الياباني (Interval Walking)', ...recLines(r)];
+    const w = periodSummary(7, r.id), m = periodSummary(30, r.id);
+    L.push('', `آخر 7 أيام (غير هذه الجلسة): ${w.list.length} جلسات في ${w.activeDays} أيام، ${w.fast} دقيقة سريعة.`);
+    L.push(`آخر 30 يومًا (غير هذه الجلسة): ${m.list.length} جلسات، ${m.total} دقيقة إجمالًا، ${m.fast} دقيقة سريعة.`);
+    const prev = sessions.filter((s) => s.id !== r.id && s.date < r.date).slice(0, 5);
+    if (prev.length) L.push('الجلسات السابقة:', ...prev.map(shortLine));
+    L.push('', ASK);
+    return L.join('\n');
+  }
+  function historyReport() {
+    const m = periodSummary(30);
+    const L = ['سجل المشي الياباني (Interval Walking) — آخر 30 يومًا',
+      `${m.list.length} جلسات في ${m.activeDays} أيام، ${m.total} دقيقة إجمالًا، منها ${m.fast} دقيقة سريعة.`, ''];
+    L.push(...m.list.map(shortLine));
+    L.push('', 'قيّم التزامي وتقدّمي بناءً على مبادئ المشي الياباني (فترات سريعة بجهد ~70% وهادئة ~40%، 4 أيام أسبوعيًا على الأقل)، واقترح تعديلات على خطتي.');
+    return L.join('\n');
+  }
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;opacity:0;top:0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch {}
+      ta.remove();
+    }
+    toast('نُسخت البيانات، الصقها في محادثة Claude');
+  }
+  $('copyBtn').addEventListener('click', () => rec && copyText(recordReport(rec)));
+  $('shareBtn').addEventListener('click', async () => {
+    if (!rec) return;
+    try { await navigator.share({ text: recordReport(rec) }); } catch {}
+  });
+
+  // ---------- lifecycle ----------
+  $('startBtn').addEventListener('click', start);
 
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible' && S) {
       if (S.running) lockScreen();
+      S.lastSec = null;
       tick();
     }
   });
 
-  renderSound();
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+
   renderSetup();
+
+  // Resume a session that was interrupted (page closed or reloaded mid-walk)
+  const active = store.get('jw-active', null);
+  if (active && active.cfg) {
+    begin(active, false);
+    toast('استُكملت جلستك');
+  }
 })();
 </script>
 </body>
