@@ -924,14 +924,80 @@
       if (navigator.audioSession) navigator.audioSession.type = loud && soundMode !== 'off' ? 'playback' : 'auto';
     } catch {}
     try {
-      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      if (!ac) {
+        ac = new (window.AudioContext || window.webkitAudioContext)();
+        // iOS can suspend or interrupt the context while no finger touches the screen; revive it whenever it happens
+        ac.onstatechange = () => { if (ac && ac.state !== 'running' && S && S.running) { try { ac.resume(); } catch {} } };
+      }
       if (ac.state !== 'running') ac.resume();
     } catch { ac = null; }
+    unlockFallback();
+  }
+  // A silent, always-running sound keeps iOS from suspending the audio context between cues
+  let keepAlive = null;
+  function startKeepAlive() {
+    if (!ac || keepAlive || soundMode === 'off') return;
+    try {
+      const o = ac.createOscillator(), g = ac.createGain();
+      g.gain.value = 0.00001;
+      o.frequency.value = 40;
+      o.connect(g).connect(ac.destination);
+      o.start();
+      keepAlive = o;
+    } catch {}
+  }
+  function stopKeepAlive() { try { keepAlive && keepAlive.stop(); } catch {} keepAlive = null; }
+
+  // Backup route: the same bells as ready-made audio files. Once unlocked by a tap, they can be played
+  // from the timer even when the Web Audio context was suspended and cannot restart without a tap.
+  const FB = {};
+  function makeWav(notes) {
+    const rate = 22050, total = Math.max(...notes.map(([, d, w]) => d + w)) + 0.1;
+    const n = Math.floor(total * rate), pcm = new Int16Array(n);
+    notes.forEach(([freq, dur, when]) => {
+      const start = Math.floor(when * rate), len = Math.floor(dur * rate);
+      for (let i = 0; i < len && start + i < n; i++) {
+        const t = i / rate;
+        const env = Math.min(1, t / 0.012) * Math.exp(-t * 7 / dur);
+        const v = (Math.sin(2 * Math.PI * freq * t) + 0.25 * Math.sin(4 * Math.PI * freq * t)) * env * 0.22;
+        pcm[start + i] = Math.max(-32768, Math.min(32767, pcm[start + i] + v * 32767));
+      }
+    });
+    const buf = new ArrayBuffer(44 + n * 2), dv = new DataView(buf);
+    const str = (o, t) => { for (let i = 0; i < t.length; i++) dv.setUint8(o + i, t.charCodeAt(i)); };
+    str(0, 'RIFF'); dv.setUint32(4, 36 + n * 2, true); str(8, 'WAVEfmt '); dv.setUint32(16, 16, true);
+    dv.setUint16(20, 1, true); dv.setUint16(22, 1, true); dv.setUint32(24, rate, true); dv.setUint32(28, rate * 2, true);
+    dv.setUint16(32, 2, true); dv.setUint16(34, 16, true); str(36, 'data'); dv.setUint32(40, n * 2, true);
+    for (let i = 0; i < n; i++) dv.setInt16(44 + i * 2, pcm[i], true);
+    return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+  }
+  function unlockFallback() {
+    if (FB.ready) return;
+    FB.ready = true;
+    try {
+      const defs = {
+        fast: [[659, 1.2, 0], [880, 1.6, .22]],
+        slow: [[880, 1.2, 0], [659, 1.6, .22]],
+        done: [523, 659, 784, 1047].map((f, i) => [f, 1.6, i * .18]),
+        other: [[740, 1.6, 0]],
+      };
+      for (const k in defs) {
+        const a = new Audio(makeWav(defs[k]));
+        a.preload = 'auto';
+        FB[k] = a;
+        a.play().then(() => { a.pause(); a.currentTime = 0; }).catch(() => {});
+      }
+    } catch {}
+  }
+  function playFallback(type) {
+    const a = FB[type] || FB.other;
+    if (!a) return;
+    try { a.currentTime = 0; a.play().catch(() => {}); } catch {}
   }
   // Soft bell: sine + quiet octave with a long natural decay
   function tone(freq, dur, when = 0, vol = 0.22) {
     if (soundMode === 'off' || !ac) return;
-    if (ac.state !== 'running') { try { ac.resume(); } catch {} }
+    if (ac.state !== 'running') { try { ac.resume(); } catch {} return; }
     const t = ac.currentTime + 0.03 + when;
     const g = ac.createGain();
     g.gain.setValueAtTime(0.0001, t);
@@ -951,6 +1017,13 @@
   const vibrate = (p) => { if (soundMode !== 'off' && navigator.vibrate) try { navigator.vibrate(p); } catch {} };
   function cue(type) {
     // rising = speed up, falling = slow down
+    if (soundMode !== 'off' && (!ac || ac.state !== 'running')) {
+      // Web Audio is asleep (no tap woke it): use the backup audio files, and try to wake the context for next time
+      try { ac && ac.resume(); } catch {}
+      playFallback(type);
+      vibrate(type === 'slow' ? [400] : type === 'done' ? [150, 60, 150, 60, 300] : [200, 80, 200]);
+      return;
+    }
     if (type === 'fast') { tone(659, 1.2); tone(880, 1.6, .22); vibrate([200, 80, 200]); }
     else if (type === 'slow') { tone(880, 1.2); tone(659, 1.6, .22); vibrate([400]); }
     else if (type === 'done') { [523, 659, 784, 1047].forEach((f, i) => tone(f, 1.6, i * .18)); vibrate([150, 60, 150, 60, 300]); }
@@ -1008,6 +1081,7 @@
     renderBar($('liveBar'), plan);
     show('session');
     if (S.running) lockScreen();
+    startKeepAlive();
     persistActive();
     renderPause();
     S.silent = !announce;
@@ -1132,6 +1206,7 @@
     const e = Math.min(elapsed(), S.total);
     unlockScreen();
     store.del('jw-active');
+    stopKeepAlive();
 
     // time actually walked per phase type (timeline covered minus skipped parts)
     const walked = { warm: 0, fast: 0, slow: 0, cool: 0 };
@@ -1298,11 +1373,6 @@
 
   function recordReport(r) {
     const L = ['تمرين المشي الياباني (Interval Walking)', ...recLines(r)];
-    const w = periodSummary(7, r.id), m = periodSummary(30, r.id);
-    L.push('', `آخر 7 أيام (غير هذه الجلسة): ${w.list.length} جلسات في ${w.activeDays} أيام، ${w.fast} دقيقة سريعة.`);
-    L.push(`آخر 30 يومًا (غير هذه الجلسة): ${m.list.length} جلسات، ${m.total} دقيقة إجمالًا، ${m.fast} دقيقة سريعة.`);
-    const prev = sessions.filter((s) => s.id !== r.id && s.date < r.date).slice(0, 5);
-    if (prev.length) L.push('الجلسات السابقة:', ...prev.map(shortLine));
     L.push('', ASK);
     return L.join('\n');
   }
@@ -1384,12 +1454,15 @@
   ['gesturestart', 'gesturechange', 'gestureend'].forEach((ev) => document.addEventListener(ev, (e) => e.preventDefault(), { passive: false }));
   document.addEventListener('touchmove', (e) => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
 
+  // any touch during a walk also wakes the sound
+  document.addEventListener('pointerdown', () => { if (S && S.running && ac && ac.state !== 'running') initAudio(); }, { passive: true });
+
   // ---------- lifecycle ----------
   $('startBtn').addEventListener('click', start);
 
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible' && S) {
-      if (S.running) lockScreen();
+      if (S.running) { lockScreen(); initAudio(); startKeepAlive(); }
       S.lastSec = null;
       tick();
     }
