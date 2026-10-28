@@ -1283,8 +1283,8 @@
 
   // Steps / distance: the page cannot read the phone's step counter, so estimate from time spent in each phase
   // (typical cadence per phase, steps per minute) and step length; typed-in real values always win.
-  const CADENCE = { warm: 110, fast: 130, slow: 115, cool: 100 };
-  const STEP_M = 0.72;
+  const CADENCE = { warm: 115, fast: 135, slow: 120, cool: 105 };
+  const STEP_M = 0.82;
   function movement(r) {
     const est = Math.round((r.warm || 0) * CADENCE.warm + (r.fast || 0) * CADENCE.fast + (r.slow || 0) * CADENCE.slow + (r.cool || 0) * CADENCE.cool);
     const realSteps = +r.steps > 0 ? Math.round(+r.steps) : 0;

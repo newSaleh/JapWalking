@@ -1,5 +1,5 @@
 // Bump VERSION on every change so installed apps pick up the update automatically.
-const VERSION = '13';
+const VERSION = '14';
 const CACHE = 'jw-' + VERSION;
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icons/apple-touch-icon.png', './icons/icon-192.png', './icons/icon-512.png'];
 
